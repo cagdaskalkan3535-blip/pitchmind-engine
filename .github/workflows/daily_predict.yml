@@ -1,0 +1,28 @@
+name: PitchMind AI Daily Football ML Predictor
+
+on:
+  schedule:
+    - cron: '0 6,16 * * *' # Her gün Türkiye saatiyle 09:00 ve 19:00'da otomatik çalışır
+  workflow_dispatch:       # İilediğiniz an iPhone GitHub uygulamasından tek tuşla tetikleyebilirsiniz
+
+jobs:
+  run-ml-predictions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo Kodunu Çek
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Kütüphaneleri Yükle
+        run: pip install -r requirements.txt
+
+      - name: 6 Büyük Lig Verisini Çek ve Tahminleri Supabase'e Yaz
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python predict.py
