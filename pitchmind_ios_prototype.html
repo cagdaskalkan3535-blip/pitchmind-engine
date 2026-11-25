@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PitchMind AI — iOS Futbol Makine Tahmini & Analiz Raporu Prototipi</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    body {
+      background: radial-gradient(circle at 15% 20%, #0d1f2d 0%, #070b12 65%, #05080d 100%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.35);
+      border-radius: 9999px;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .ios-glass {
+      background: rgba(17, 25, 40, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .ios-card {
+      background: rgba(24, 34, 52, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ios-card:hover {
+      border-color: rgba(16, 185, 129, 0.28);
+    }
+    .iphone-shell {
+      width: 100%;
+      max-width: 430px;
+      height: 900px;
+      border-radius: 50px;
+      border: 10px solid #1e293b;
+      background: #090e17;
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.85), 0 0 0 2px rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .dynamic-island {
+      width: 120px;
+      height: 30px;
+      background: #000000;
+      border-radius: 999px;
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.2); }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #10b981;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 lg:p-8">
+
+  <!-- Top Header Banner -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+        <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">PitchMind AI <span class="text-emerald-400 font-semibold text-base">iOS v2.0</span></h1>
+          <span class="px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-full">6 Elit Lig · App Store Safe</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Süper Lig + Avrupa'nın 5 Büyük Ligi İçin Oransız Makine Tahmini & 0₺ Sunucu Mimarisi</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button id="btnRunPipeline" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="syncIcon"></i>
+        <span>Canlı API Verisi Çek & Modeli Çalıştır</span>
+      </button>
+      <button id="btnToggleArchModal" class="px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 flex items-center gap-2 transition">
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-teal-400"></i>
+        <span>Önerilen API & App Store Stratejisi</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace: Left iPhone iOS Simulator + Right Detailed ML Engine & Free Server Guide -->
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT COLUMN: iOS iPhone 16 Pro Interactive Prototype (5 cols on lg) -->
+    <section class="lg:col-span-5 flex flex-col items-center">
+      <!-- Top "Futbol Radarları" (6 League Filter Bar) + Match Selector Pills above phone -->
+      <div class="w-full max-w-[430px] mb-3 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] uppercase tracking-wider font-bold text-emerald-400 flex items-center gap-1.5">
+            <i data-lucide="globe-2" class="w-3.5 h-3.5"></i> Futbol Radarları (6 Elit Lig)
+          </span>
+          <span class="mono text-[11px] text-slate-400" id="activeMatchBadge">Trendyol Süper Lig</span>
+        </div>
+
+        <!-- 6 Leagues Grid Selector (Desktop & Quick Filter) -->
+        <div class="grid grid-cols-3 gap-1.5" id="desktopLeagueBar"></div>
+
+        <!-- Matches inside the Selected League -->
+        <div class="grid grid-cols-2 gap-2" id="matchSelectorContainer"></div>
+      </div>
+
+      <!-- iPhone 16 Pro Frame -->
+      <div class="iphone-shell">
+        <!-- Dynamic Island -->
+        <div class="dynamic-island">
+          <div class="flex items-center gap-1.5">
+            <span class="pulse-dot"></span>
+            <span class="text-[10px] mono text-emerald-400 font-semibold">ML CORE</span>
+          </div>
+          <span class="text-[10px] mono text-slate-400" id="islandConfidence">84% GÜVEN</span>
+        </div>
+
+        <!-- iOS Status Bar -->
+        <div class="pt-3 pb-1.5 px-7 flex items-center justify-between text-xs font-semibold text-slate-300 select-none">
+          <span>21:00</span>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i>
+            <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+            <i data-lucide="battery-full" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+        </div>
+
+        <!-- iOS Native "Lig Vitrinleri" Horizontal Scroll Bar + In-Phone Match Switcher -->
+        <div class="px-4 pt-1 pb-2.5 border-b border-slate-800/90 bg-slate-950/75 space-y-2">
+          <!-- Native iOS League Hub Carousel -->
+          <div>
+            <div class="flex items-center justify-between mb-1 px-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Lig Vitrinleri</span>
+              <span class="text-[10px] font-semibold text-emerald-400 flex items-center gap-1" id="iosLeagueTitle">
+                <i data-lucide="shield-check" class="w-3 h-3"></i> Trendyol Süper Lig
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5" id="iosLeagueCarousel"></div>
+          </div>
+
+          <!-- Native iOS Fixture Segment Switcher for Active League -->
+          <div class="grid grid-cols-2 gap-1.5" id="iosFixtureSwitcher"></div>
+
+          <!-- Teams Scoreboard Card inside iOS Header -->
+          <div class="ios-card p-3 bg-gradient-to-b from-slate-900/90 to-slate-950/90">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1.5 px-1">
+              <span id="iosStadiumLabel" class="truncate max-w-[210px]">RAMS Park</span>
+              <span class="mono text-emerald-300" id="iosMatchTime">Cumartesi · 20:00</span>
+            </div>
+            <div class="grid grid-cols-7 items-center text-center">
+              <!-- Home Team -->
+              <div class="col-span-3 flex flex-col items-center">
+                <div id="iosHomeBadge" class="w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-md mb-1">GS</div>
+                <div id="iosHomeName" class="font-bold text-xs text-white leading-tight">Galatasaray</div>
+                <div id="iosHomeRank" class="text-[10px] text-slate-400 mt-0.5">Ev · 1. Sıra</div>
+              </div>
+
+              <!-- VS / Expected Score -->
+              <div class="col-span-1 flex flex-col items-center justify-center">
+                <span class="text-[9px] uppercase font-bold text-slate-500">Tahmin</span>
+                <div id="iosPredictedScorePill" class="my-1 px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-extrabold mono text-xs">
+                  2 - 1
+                </div>
+                <span class="text-[9px] text-slate-400 mono" id="iosTotalXgLabel">3.12 xG</span>
+              </div>
+
+              <!-- Away Team -->
+              <div class="col-span-3 flex flex-col items-center">
+                <div id="iosAwayBadge" class="w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-md mb-1">FB</div>
+                <div id="iosAwayName" class="font-bold text-xs text-white leading-tight">Fenerbahçe</div>
+                <div id="iosAwayRank" class="text-[10px] text-slate-400 mt-0.5">Dep · 2. Sıra</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable iOS Screen Content Area -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3" id="iosScreenViewport">
+          <!-- Dynamically populated by JS based on active iOS Bottom Tab -->
+        </div>
+
+        <!-- iOS Bottom Tab Bar -->
+        <nav class="ios-glass px-3 pt-2 pb-5 border-t border-slate-800/90 grid grid-cols-4 gap-1">
+          <button data-tab="report" class="ios-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-emerald-400 transition">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <span class="text-[10px] font-semibold mt-1">AI Rapor</span>
+          </button>
+          <button data-tab="form" class="ios-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200 transition">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+            <span class="text-[10px] font-semibold mt-1">Son 10 & 2</span>
+          </button>
+          <button data-tab="squad" class="ios-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200 transition">
+            <i data-lucide="user-x" class="w-5 h-5"></i>
+            <span class="text-[10px] font-semibold mt-1">Sakat/Ceza</span>
+          </button>
+          <button data-tab="htft" class="ios-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200 transition">
+            <i data-lucide="grid" class="w-5 h-5"></i>
+            <span class="text-[10px] font-semibold mt-1">İY/MS & H2H</span>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Free Server Stack Recommendation, ML Simulator & Charts (7 cols on lg) -->
+    <section class="lg:col-span-7 space-y-5">
+
+      <!-- NEW CARD: 0₺ Free Server & Cloud Backend Architecture Selector -->
+      <div class="ios-card p-5 border-emerald-500/35 bg-gradient-to-br from-emerald-950/25 via-slate-900/80 to-slate-900">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+              <i data-lucide="cloud-cog" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-sm sm:text-base font-bold text-white">Kendi Sunucun Yoksa: %100 Ücretsiz (0₺) Bulut Sunucu Mimarisi</h2>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Kredi Kartsız Başlangıç</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5">Sunucu kiralamadan 6 büyük ligin verisini otomatik çekip makine tahminlerini iOS uygulamana sunan 3 katmanlı ücretsiz yapı:</p>
+            </div>
+          </div>
+          <button id="btnCopySwiftCode" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition shrink-0 self-start sm:self-auto">
+            <i data-lucide="code" class="w-3.5 h-3.5"></i>
+            <span>SwiftUI Modelini Kopyala</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3.5 text-xs">
+          <!-- Free Layer 1: GitHub Actions -->
+          <div class="p-3.5 rounded-xl bg-slate-950/85 border border-slate-800/90 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 1. GitHub Actions
+                </span>
+                <span class="mono text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300">0₺ / Ay</span>
+              </div>
+              <p class="text-slate-300 leading-relaxed text-[11px]">
+                <strong>Ücretsiz Python & ML İşlemcisi:</strong> 7/24 açık sunucuya ihtiyacın yok. GitHub Actions üzerindeki `cron` zamanlayıcı her sabah ve maçlardan 1 saat önce Python betiğini ücretsiz çalıştırır; 6 ligin sakat/cezalı ve form verisini çekip **Poisson + XGBoost** tahminlerini hesaplar.
+              </p>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-800/80 text-[10px] mono text-slate-400">
+              Limit: Ayda 2.000 dk ücretsiz (Günde ~12 dk yeterli)
+            </div>
+          </div>
+
+          <!-- Free Layer 2: Supabase -->
+          <div class="p-3.5 rounded-xl bg-slate-950/85 border border-slate-800/90 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-teal-400 flex items-center gap-1.5">
+                  <i data-lucide="database" class="w-3.5 h-3.5"></i> 2. Supabase (PostgreSQL)
+                </span>
+                <span class="mono text-[10px] px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-300">0₺ / Ay</span>
+              </div>
+              <p class="text-slate-300 leading-relaxed text-[11px]">
+                <strong>Ücretsiz Veritabanı & Hazır iOS API:</strong> GitHub Actions'ın ürettiği maç tahmin raporları Supabase tablosuna yazılır. Supabase sana anında hazır **REST API ve Swift SDK** verir; böylece tek satır backend sunucu kodu yazmadan iOS uygulaman raporları çeker.
+              </p>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-800/80 text-[10px] mono text-slate-400">
+              Limit: 500 MB DB + Sınırsız API İsteği (Free Tier)
+            </div>
+          </div>
+
+          <!-- Free Layer 3: Oracle Cloud / Render / Cloudflare -->
+          <div class="p-3.5 rounded-xl bg-slate-950/85 border border-slate-800/90 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-amber-400 flex items-center gap-1.5">
+                  <i data-lucide="server" class="w-3.5 h-3.5"></i> 3. Alternatif Canlı API
+                </span>
+                <span class="mono text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">Always-Free</span>
+              </div>
+              <p class="text-slate-300 leading-relaxed text-[11px]">
+                <strong>7/24 Canlı FastAPI İstersen:</strong> **Render.com** veya **Koyeb** ücretsiz katmanında Docker/FastAPI çalıştırabilir ya da **Oracle Cloud Always Free** (4 ARM CPU, 24 GB RAM ömür boyu ücretsiz VPS) üzerinde kendi özel Linux sunucunu kurabilirsin.
+              </p>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-800/80 text-[10px] mono text-slate-400">
+              Veri: API-Football Free (100 istek/gün 6 lig için tam yeter)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Machine Learning Feature Weights & Simulation Lab -->
+      <div class="ios-card p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h2 class="text-base font-bold text-white">Makine Öğrenmesi Parametre Ağırlık Simülatörü (XGBoost + Dixon-Coles Poisson)</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Aşağıdaki parametre ağırlıklarını değiştirdiğinizde iOS ekranındaki <strong class='text-slate-200'>MS, İY/MS, KG Var ve 2.5 Üst</strong> olasılıkları anlık yeniden hesaplanır.</p>
+          </div>
+          <button id="btnResetWeights" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 self-start sm:self-auto">
+            Varsayılan Ağırlıklar
+          </button>
+        </div>
+
+        <!-- Sliders Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+            <div class="flex justify-between text-xs font-semibold mb-1.5">
+              <span class="text-slate-200">Son 10 Maç Genel Form Trendi</span>
+              <span class="mono text-emerald-400" id="valWeight10">25%</span>
+            </div>
+            <input type="range" id="sliderWeight10" min="5" max="50" value="25" class="w-full">
+            <p class="text-[11px] text-slate-400 mt-1">Uzun vadeli xG, şut isabeti ve puan ortalaması.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+            <div class="flex justify-between text-xs font-semibold mb-1.5">
+              <span class="text-slate-200">Son 2 Maçlık Anlık İvme (Şok Form)</span>
+              <span class="mono text-emerald-400" id="valWeight2">20%</span>
+            </div>
+            <input type="range" id="sliderWeight2" min="5" max="50" value="20" class="w-full">
+            <p class="text-[11px] text-slate-400 mt-1">Son 14 gündeki moral, teknik direktör etkisi ve gol reaksiyonu.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+            <div class="flex justify-between text-xs font-semibold mb-1.5">
+              <span class="text-slate-200">Sakatlık & Kart Cezalısı Etkisi</span>
+              <span class="mono text-emerald-400" id="valWeightSquad">25%</span>
+            </div>
+            <input type="range" id="sliderWeightSquad" min="0" max="50" value="25" class="w-full">
+            <p class="text-[11px] text-slate-400 mt-1">Eksik ilk 11 oyuncularının xG üretim ve savunma zafiyeti katsayısı.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+            <div class="flex justify-between text-xs font-semibold mb-1.5">
+              <span class="text-slate-200">İç/Dış Saha & Geçmiş (H2H) Karakteri</span>
+              <span class="mono text-emerald-400" id="valWeightVenue">30%</span>
+            </div>
+            <input type="range" id="sliderWeightVenue" min="5" max="50" value="30" class="w-full">
+            <p class="text-[11px] text-slate-400 mt-1">Ev sahibi taraftar baskısı, deplasman direnci ve H2H ilk yarı gol alışkanlığı.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Visual Analytics Comparison (Radar + Poisson Goal Timing) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="ios-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Çok Boyutlu Performans Endeksi</h3>
+            <span class="text-[11px] mono text-emerald-400">0-100 Ölçek</span>
+          </div>
+          <div class="relative h-64">
+            <canvas id="teamRadarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="ios-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Dakika Bazlı Gol Olasılık Dağılımı (İY / MS)</h3>
+            <span class="text-[11px] mono text-teal-400">Poisson λ</span>
+          </div>
+          <div class="relative h-64">
+            <canvas id="goalTimingChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="fixed bottom-5 right-5 z-50 hidden px-4 py-3 rounded-2xl bg-slate-900/95 border border-emerald-500/40 text-slate-100 text-xs font-medium shadow-2xl flex items-center gap-2.5">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMessage">Veri güncellendi.</span>
+  </div>
+
+  <!-- Architecture & API Strategy Modal -->
+  <div id="archModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="ios-card max-w-2xl w-full p-6 bg-slate-900 border border-slate-700 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <i data-lucide="server" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="text-base font-bold text-white">0₺ Sunucusuz (Serverless) Veri Çekme Hattı & 6 Büyük Lig API Planı</h3>
+        </div>
+        <button id="btnCloseArchModal" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 mt-4 text-xs text-slate-300">
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="font-bold text-emerald-400 mb-1">1. Ücretsiz API Kotası 6 Büyük Lige Nasıl Yeter?</div>
+          <p>API-Football'un ücretsiz planı günde <strong>100 istek (request)</strong> hakkı verir. 6 elit ligde (Süper Lig, Premier League, LaLiga, Serie A, Bundesliga, Ligue 1) haftada ortalama 55 maç oynanır. İstekleri kullanıcı telefonundan değil, <strong>GitHub Actions</strong> üzerinden günde 1 kez toplu çekip <strong>Supabase</strong> veritabanına kaydettiğinde günde sadece ~24 API isteği harcarsın ve ücretsiz kotayı asla aşmazsın.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="font-bold text-teal-400 mb-1">2. GitHub Actions + Supabase İş Akışı (0₺ Maliyet)</div>
+          <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-400 mono text-[11px]">
+            <li>.github/workflows/daily_ml_predict.yml -> Her gün 06:00 ve 18:00'de çalışır</li>
+            <li>Python scripti 6 ligin (ID: 203, 39, 140, 135, 78, 61) sakat/cezalı ve form verisini çeker</li>
+            <li>Scikit-Learn / XGBoost + Poisson modeli İY/MS, KG Var ve 2.5 Alt/Üst yüzdelerini üretir</li>
+            <li>Sonuçlar JSON olarak ücretsiz Supabase PostgreSQL tablosuna (`match_reports`) yazılır</li>
+          </ul>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="font-bold text-amber-400 mb-1">3. App Store Onay Güvencesi</div>
+          <p>Uygulama içinde bahis oranı veya bahis sitesi yönlendirmesi yer almadığı, bunun yerine 6 büyük lig için <strong>"Futbol Radarları & Yapay Zeka Maç Analizi"</strong> sunulduğu için Apple incelemesinden <strong>Sports / Statistics</strong> kategorisinde doğrudan onay alır.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 6 Major Football Leagues Hub ("Futbol Radarları / Lig Vitrinleri")
+    const LEAGUES = [
+      { id: "TR", code: "TR", flag: "🇹🇷", name: "Süper Lig", fullName: "Trendyol Süper Lig", country: "Türkiye", apiId: 203 },
+      { id: "EN", code: "EN", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", name: "Premier League", fullName: "İngiltere Premier League", country: "İngiltere", apiId: 39 },
+      { id: "ES", code: "ES", flag: "🇪🇸", name: "LaLiga", fullName: "İspanya LaLiga EA Sports", country: "İspanya", apiId: 140 },
+      { id: "IT", code: "IT", flag: "🇮🇹", name: "Serie A", fullName: "İtalya Serie A Enilive", country: "İtalya", apiId: 135 },
+      { id: "DE", code: "DE", flag: "🇩🇪", name: "Bundesliga", fullName: "Almanya Bundesliga", country: "Almanya", apiId: 78 },
+      { id: "FR", code: "FR", flag: "🇫🇷", name: "Ligue 1", fullName: "Fransa Ligue 1 McDonald's", country: "Fransa", apiId: 61 }
+    ];
+
+    // Comprehensive Matches Dataset Across Türkiye Süper Lig + Europe's Top 5 Leagues (2 Matches per League = 12 Matches)
+    const MATCHES = [
+      // 1. TÜRKİYE SÜPER LİG (TR)
+      {
+        id: "gs-fb",
+        leagueId: "TR",
+        league: "Trendyol Süper Lig · 13. Hafta",
+        time: "Cumartesi · 20:00",
+        stadium: "RAMS Park (İstanbul)",
+        referee: "Halil Umut Meler (Ort. 4.8 Sarı, 0.32 Kırmızı)",
+        home: {
+          code: "GS", name: "Galatasaray", color: "#f59e0b", bg: "linear-gradient(135deg, #991b1b, #d97706)", rank: "1. Sıra (34P)",
+          venueStats: { played: 7, wins: 6, draws: 1, losses: 0, gf: 19, ga: 7, xg: 2.38, xga: 0.94, htLeadPct: 57, cleanSheetPct: 43, bttsPct: 71, over25Pct: 86 },
+          last10: ["G", "G", "B", "G", "G", "G", "M", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.50, gfAvg: 2.40, gaAvg: 1.00, xgAvg: 2.24, shotsOnTarget: 6.8 },
+          last2: [
+            { opponent: "Samsunspor (E)", htScore: "2-0", ftScore: "3-2", result: "G", xg: 2.65, note: "Yüksek hücum temposu, son 15 dk savunma düşüşü" },
+            { opponent: "Bodrum FK (D)", htScore: "0-0", ftScore: "1-0", result: "G", xg: 1.82, note: "Kapalı savunmaya karşı duran top çözümü" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 2.00, gaAvg: 1.00, momentumScore: 88 },
+          missingPlayers: [
+            { name: "Mauro Icardi", pos: "Santrfor", reason: "Çapraz Bağ Sakatlığı", status: "Sakat", impactPct: 18, detail: "Ceza sahası bitiriciliği ve penaltı lideri" },
+            { name: "Ismail Jakobs", pos: "Sol Bek", reason: "Arka Adale Sakatlığı", status: "Sakat", impactPct: 9, detail: "Sol koridor geçiş savunması" },
+            { name: "Kaan Ayhan", pos: "Sağ Bek / Ön Libero", reason: "4 Sarı Kart Cezalısı", status: "Cezalı", impactPct: 8, detail: "Savunma rotasyonu ve oyun kurulumu" }
+          ],
+          radar: [89, 76, 86, 92, 74]
+        },
+        away: {
+          code: "FB", name: "Fenerbahçe", color: "#3b82f6", bg: "linear-gradient(135deg, #1e3a8a, #eab308)", rank: "2. Sıra (29P)",
+          venueStats: { played: 7, wins: 5, draws: 2, losses: 0, gf: 18, ga: 6, xg: 2.12, xga: 0.88, htLeadPct: 50, cleanSheetPct: 50, bttsPct: 57, over25Pct: 71 },
+          last10: ["G", "G", "B", "G", "M", "G", "B", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.30, gfAvg: 2.30, gaAvg: 0.90, xgAvg: 2.05, shotsOnTarget: 6.2 },
+          last2: [
+            { opponent: "Kayserispor (D)", htScore: "3-1", ftScore: "6-2", result: "G", xg: 3.10, note: "Geçiş hücumlarında çok yüksek bitiricilik" },
+            { opponent: "Sivasspor (E)", htScore: "1-0", ftScore: "4-0", result: "G", xg: 2.45, note: "Son 2 maçta 10 gol ile maksimum hücum morali" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 5.00, gaAvg: 1.00, momentumScore: 95 },
+          missingPlayers: [
+            { name: "Jayden Oosterwolde", pos: "Sol Bek / Stoper", reason: "Diz Sakatlığı", status: "Sakat", impactPct: 12, detail: "Atletik savunma arkası süpürücü" },
+            { name: "Çağlar Söyüncü", pos: "Stoper", reason: "Kasık Sakatlığı", status: "Sakat", impactPct: 10, detail: "Hava topu hakimiyeti" }
+          ],
+          radar: [88, 82, 83, 95, 79]
+        },
+        h2h: [
+          { date: "Mayıs 2024", home: "GS", away: "FB", ht: "0-0", ft: "0-1", cards: "7 Sarı, 1 Kırmızı" },
+          { date: "Aralık 2023", home: "FB", away: "GS", ht: "0-0", ft: "0-0", cards: "6 Sarı, 0 Kırmızı" },
+          { date: "Haziran 2023", home: "GS", away: "FB", ht: "1-0", ft: "3-0", cards: "5 Sarı, 1 Kırmızı" },
+          { date: "Ocak 2023", home: "FB", away: "GS", ht: "0-1", ft: "0-3", cards: "8 Sarı, 1 Kırmızı" }
+        ],
+        goalTimingHome: [14, 19, 26, 15, 22, 28],
+        goalTimingAway: [12, 17, 21, 18, 24, 27]
+      },
+      {
+        id: "bjk-ts",
+        leagueId: "TR",
+        league: "Trendyol Süper Lig · 13. Hafta",
+        time: "Pazar · 19:00",
+        stadium: "Tüpraş Stadyumu (İstanbul)",
+        referee: "Atilla Karaoğlan (Ort. 4.4 Sarı, 0.24 Kırmızı)",
+        home: {
+          code: "BJK", name: "Beşiktaş", color: "#e2e8f0", bg: "linear-gradient(135deg, #1e293b, #475569)", rank: "5. Sıra (21P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 13, ga: 7, xg: 1.85, xga: 1.12, htLeadPct: 50, cleanSheetPct: 33, bttsPct: 67, over25Pct: 67 },
+          last10: ["G", "G", "B", "G", "M", "M", "B", "G", "M", "B"],
+          last10Metrics: { ptsPerMatch: 1.50, gfAvg: 1.55, gaAvg: 1.25, xgAvg: 1.64, shotsOnTarget: 5.1 },
+          last2: [
+            { opponent: "Başakşehir (D)", htScore: "0-0", ftScore: "0-0", result: "B", xg: 0.92, note: "Üçüncü bölgede üretkenlik sorunu" },
+            { opponent: "Kasımpaşa (E)", htScore: "1-0", ftScore: "1-3", result: "M", xg: 1.48, note: "İlk yarı önde kapatıp ikinci yarı geçiş golleri yedi" }
+          ],
+          last2Metrics: { ptsPerMatch: 0.50, gfAvg: 0.50, gaAvg: 1.50, momentumScore: 42 },
+          missingPlayers: [
+            { name: "Ciro Immobile", pos: "Santrfor", reason: "Uyluk Sakatlığı", status: "Sakat", impactPct: 24, detail: "Takımın gol yükünün %42'sini çekiyor" },
+            { name: "Gabriel Paulista", pos: "Stoper", reason: "Adale Sakatlığı", status: "Sakat", impactPct: 14, detail: "Savunma liderliği ve duran top savunması" },
+            { name: "Arthur Masuaku", pos: "Sol Bek", reason: "Sarı Kart Cezalısı", status: "Cezalı", impactPct: 9, detail: "Hücum bindirmeleri ve duran top servisi" }
+          ],
+          radar: [72, 68, 64, 42, 58]
+        },
+        away: {
+          code: "TS", name: "Trabzonspor", color: "#a855f7", bg: "linear-gradient(135deg, #7f1d1d, #0284c7)", rank: "8. Sıra (16P)",
+          venueStats: { played: 6, wins: 1, draws: 4, losses: 1, gf: 7, ga: 8, xg: 1.24, xga: 1.38, htLeadPct: 17, cleanSheetPct: 33, bttsPct: 67, over25Pct: 50 },
+          last10: ["B", "B", "G", "B", "M", "G", "M", "M", "G", "B"],
+          last10Metrics: { ptsPerMatch: 1.30, gfAvg: 1.30, gaAvg: 1.30, xgAvg: 1.41, shotsOnTarget: 4.6 },
+          last2: [
+            { opponent: "Adana Demirspor (E)", htScore: "2-0", ftScore: "5-0", result: "G", xg: 2.85, note: "Simon Banza liderliğinde hücum patlaması" },
+            { opponent: "Ç. Rizespor (D)", htScore: "1-1", ftScore: "1-3", result: "M", xg: 1.15, note: "Deplasmanda ikinci yarı savunma kırılganlığı" }
+          ],
+          last2Metrics: { ptsPerMatch: 1.50, gfAvg: 3.00, gaAvg: 1.50, momentumScore: 68 },
+          missingPlayers: [
+            { name: "Stefan Savic", pos: "Stoper", reason: "Arka Adale Sakatlığı", status: "Sakat", impactPct: 13, detail: "Merkez savunma sertliği" },
+            { name: "Okay Yokuşlu", pos: "Ön Libero", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 11, detail: "Orta saha ikili mücadele ve hava topu" }
+          ],
+          radar: [70, 65, 58, 68, 76]
+        },
+        h2h: [
+          { date: "Eylül 2024", home: "TS", away: "BJK", ht: "1-1", ft: "1-1", cards: "5 Sarı, 1 Kırmızı" },
+          { date: "Mayıs 2024", home: "BJK", away: "TS", ht: "1-1", ft: "3-2", cards: "7 Sarı, 0 Kırmızı" },
+          { date: "Şubat 2024", home: "BJK", away: "TS", ht: "1-0", ft: "2-0", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [11, 21, 23, 14, 16, 19],
+        goalTimingAway: [10, 14, 19, 17, 21, 25]
+      },
+
+      // 2. PREMIER LEAGUE (EN)
+      {
+        id: "mci-ars",
+        leagueId: "EN",
+        league: "Premier League · 13. Hafta",
+        time: "Pazar · 19:30",
+        stadium: "Etihad Stadium (Manchester)",
+        referee: "Michael Oliver (Ort. 3.9 Sarı, 0.18 Kırmızı)",
+        home: {
+          code: "MCI", name: "Manchester City", color: "#38bdf8", bg: "linear-gradient(135deg, #0284c7, #0f172a)", rank: "2. Sıra (23P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 14, ga: 8, xg: 2.15, xga: 1.05, htLeadPct: 50, cleanSheetPct: 33, bttsPct: 67, over25Pct: 83 },
+          last10: ["G", "B", "G", "G", "G", "M", "M", "M", "M", "B"],
+          last10Metrics: { ptsPerMatch: 1.40, gfAvg: 1.60, gaAvg: 1.70, xgAvg: 1.95, shotsOnTarget: 6.1 },
+          last2: [
+            { opponent: "Tottenham (E)", htScore: "0-2", ftScore: "0-4", result: "M", xg: 2.10, note: "Yüksek xG üretimine rağmen geçiş savunması çöktü" },
+            { opponent: "Brighton (D)", htScore: "1-0", ftScore: "1-2", result: "M", xg: 1.75, note: "İlk yarıyı önde bitirip son 20 dakikada 2 gol yedi" }
+          ],
+          last2Metrics: { ptsPerMatch: 0.00, gfAvg: 0.50, gaAvg: 3.00, momentumScore: 34 },
+          missingPlayers: [
+            { name: "Rodri", pos: "Ön Libero", reason: "Ön Çapraz Bağ Sakatlığı", status: "Sakat", impactPct: 26, detail: "Orta saha geçiş kontrolü ve oyun dengesi" },
+            { name: "Rúben Dias", pos: "Stoper", reason: "Baldır Sakatlığı", status: "Sakat", impactPct: 12, detail: "Savunma merkezi organizasyonu" }
+          ],
+          radar: [85, 64, 68, 34, 62]
+        },
+        away: {
+          code: "ARS", name: "Arsenal", color: "#ef4444", bg: "linear-gradient(135deg, #b91c1c, #1e293b)", rank: "3. Sıra (22P)",
+          venueStats: { played: 6, wins: 3, draws: 2, losses: 1, gf: 11, ga: 6, xg: 1.68, xga: 0.92, htLeadPct: 50, cleanSheetPct: 50, bttsPct: 50, over25Pct: 50 },
+          last10: ["G", "G", "M", "B", "G", "M", "B", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.00, gfAvg: 1.90, gaAvg: 0.90, xgAvg: 1.88, shotsOnTarget: 5.7 },
+          last2: [
+            { opponent: "Nottm Forest (E)", htScore: "1-0", ftScore: "3-0", result: "G", xg: 2.35, note: "Ødegaard dönüşüyle tam saha hakimiyet" },
+            { opponent: "Sporting CP (D)", htScore: "3-0", ftScore: "5-1", result: "G", xg: 2.70, note: "İlk yarıdan maçı koparan elit bitiricilik" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 4.00, gaAvg: 0.50, momentumScore: 93 },
+          missingPlayers: [
+            { name: "Ben White", pos: "Sağ Bek", reason: "Diz Operasyonu", status: "Sakat", impactPct: 10, detail: "Sağ stoper-bek hibrit savunma" }
+          ],
+          radar: [84, 88, 79, 93, 90]
+        },
+        h2h: [
+          { date: "Eylül 2024", home: "MCI", away: "ARS", ht: "1-2", ft: "2-2", cards: "6 Sarı, 1 Kırmızı" },
+          { date: "Mart 2024", home: "MCI", away: "ARS", ht: "0-0", ft: "0-0", cards: "3 Sarı, 0 Kırmızı" },
+          { date: "Ekim 2023", home: "ARS", away: "MCI", ht: "0-0", ft: "1-0", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [19, 21, 18, 16, 17, 20],
+        goalTimingAway: [15, 22, 24, 18, 19, 17]
+      },
+      {
+        id: "liv-che",
+        leagueId: "EN",
+        league: "Premier League · 13. Hafta",
+        time: "Cumartesi · 18:00",
+        stadium: "Anfield (Liverpool)",
+        referee: "Anthony Taylor (Ort. 4.3 Sarı, 0.21 Kırmızı)",
+        home: {
+          code: "LIV", name: "Liverpool", color: "#f43f5e", bg: "linear-gradient(135deg, #991b1b, #e11d48)", rank: "1. Sıra (31P)",
+          venueStats: { played: 6, wins: 5, draws: 0, losses: 1, gf: 13, ga: 4, xg: 2.28, xga: 0.78, htLeadPct: 50, cleanSheetPct: 50, bttsPct: 50, over25Pct: 67 },
+          last10: ["G", "G", "G", "B", "G", "G", "G", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.80, gfAvg: 2.30, gaAvg: 0.70, xgAvg: 2.32, shotsOnTarget: 6.7 },
+          last2: [
+            { opponent: "Southampton (D)", htScore: "1-1", ftScore: "3-2", result: "G", xg: 2.65, note: "Salah liderliğinde ikinci yarı baskısı" },
+            { opponent: "Aston Villa (E)", htScore: "1-0", ftScore: "2-0", result: "G", xg: 2.15, note: "Kontrollü geçiş hücumu ve gol yemeden galibiyet" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 2.50, gaAvg: 1.00, momentumScore: 94 },
+          missingPlayers: [
+            { name: "Alisson Becker", pos: "Kaleci", reason: "Arka Adale Sakatlığı", status: "Sakat", impactPct: 9, detail: "Bire bir kurtarış lideri" },
+            { name: "Diogo Jota", pos: "Forvet", reason: "Kaburga Sakatlığı", status: "Sakat", impactPct: 10, detail: "Ceza sahası pres ve bitiricilik" }
+          ],
+          radar: [92, 90, 95, 94, 83]
+        },
+        away: {
+          code: "CHE", name: "Chelsea", color: "#60a5fa", bg: "linear-gradient(135deg, #1d4ed8, #1e293b)", rank: "4. Sıra (22P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 15, ga: 7, xg: 2.04, xga: 1.18, htLeadPct: 50, cleanSheetPct: 33, bttsPct: 67, over25Pct: 83 },
+          last10: ["G", "G", "B", "M", "G", "B", "B", "G", "G", "B"],
+          last10Metrics: { ptsPerMatch: 1.90, gfAvg: 2.10, gaAvg: 1.10, xgAvg: 2.02, shotsOnTarget: 6.0 },
+          last2: [
+            { opponent: "Leicester (D)", htScore: "1-0", ftScore: "2-1", result: "G", xg: 2.10, note: "Nicolas Jackson ve Enzo ile deplasman üstünlüğü" },
+            { opponent: "Arsenal (E)", htScore: "0-0", ftScore: "1-1", result: "B", xg: 1.45, note: "Cole Palmer markaj altındayken kanat şutları" }
+          ],
+          last2Metrics: { ptsPerMatch: 2.00, gfAvg: 1.50, gaAvg: 1.00, momentumScore: 80 },
+          missingPlayers: [
+            { name: "Reece James", pos: "Sağ Bek", reason: "Hamstring Sakatlığı", status: "Sakat", impactPct: 11, detail: "Sağ koridor atletizmi" },
+            { name: "Wesley Fofana", pos: "Stoper", reason: "5 Sarı Kart Cezalısı", status: "Cezalı", impactPct: 10, detail: "Savunma arkası hız kontrolü" }
+          ],
+          radar: [86, 76, 81, 80, 79]
+        },
+        h2h: [
+          { date: "Ekim 2024", home: "LIV", away: "CHE", ht: "1-0", ft: "2-1", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Ocak 2024", home: "LIV", away: "CHE", ht: "2-0", ft: "4-1", cards: "4 Sarı, 0 Kırmızı" },
+          { date: "Ağustos 2023", home: "CHE", away: "LIV", ht: "1-1", ft: "1-1", cards: "6 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [14, 22, 20, 18, 23, 29],
+        goalTimingAway: [16, 18, 19, 21, 20, 22]
+      },
+
+      // 3. LALIGA (ES)
+      {
+        id: "rma-bar",
+        leagueId: "ES",
+        league: "LaLiga EA Sports · El Clásico",
+        time: "Cumartesi · 22:00",
+        stadium: "Santiago Bernabéu (Madrid)",
+        referee: "José María Sánchez (Ort. 5.1 Sarı, 0.29 Kırmızı)",
+        home: {
+          code: "RMA", name: "Real Madrid", color: "#38bdf8", bg: "linear-gradient(135deg, #1e293b, #0284c7)", rank: "2. Sıra (30P)",
+          venueStats: { played: 7, wins: 6, draws: 0, losses: 1, gf: 18, ga: 6, xg: 2.42, xga: 0.85, htLeadPct: 43, cleanSheetPct: 57, bttsPct: 57, over25Pct: 71 },
+          last10: ["G", "G", "B", "G", "M", "G", "G", "M", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.20, gfAvg: 2.20, gaAvg: 1.00, xgAvg: 2.18, shotsOnTarget: 6.9 },
+          last2: [
+            { opponent: "Leganés (D)", htScore: "1-0", ftScore: "3-0", result: "G", xg: 2.54, note: "Mbappé & Vinícius uyumu ve net skor" },
+            { opponent: "Osasuna (E)", htScore: "2-0", ftScore: "4-0", result: "G", xg: 2.95, note: "Evinde son 2 maçta gol yemeden 7 gol" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 3.50, gaAvg: 0.00, momentumScore: 94 },
+          missingPlayers: [
+            { name: "Dani Carvajal", pos: "Sağ Bek", reason: "Diz Çapraz Bağ", status: "Sakat", impactPct: 14, detail: "Sağ kanat savunma ve liderlik" },
+            { name: "Éder Militão", pos: "Stoper", reason: "Diz Sakatlığı", status: "Sakat", impactPct: 13, detail: "Savunma derinliği ve hız" },
+            { name: "Aurélien Tchouaméni", pos: "Ön Libero", reason: "Ayak Bileği Sakatlığı", status: "Sakat", impactPct: 10, detail: "Merkez alan koruma" }
+          ],
+          radar: [91, 79, 84, 94, 66]
+        },
+        away: {
+          code: "BAR", name: "Barcelona", color: "#f43f5e", bg: "linear-gradient(135deg, #881337, #1d4ed8)", rank: "1. Sıra (34P)",
+          venueStats: { played: 8, wins: 6, draws: 1, losses: 1, gf: 25, ga: 10, xg: 2.55, xga: 1.18, htLeadPct: 63, cleanSheetPct: 25, bttsPct: 75, over25Pct: 88 },
+          last10: ["G", "G", "G", "G", "G", "G", "G", "M", "B", "G"],
+          last10Metrics: { ptsPerMatch: 2.50, gfAvg: 2.90, gaAvg: 1.10, xgAvg: 2.62, shotsOnTarget: 7.4 },
+          last2: [
+            { opponent: "Celta Vigo (D)", htScore: "1-0", ftScore: "2-2", result: "B", xg: 1.88, note: "Son 10 dakikada kırmızı kart sonrası 2 gol yedi" },
+            { opponent: "Real Sociedad (D)", htScore: "0-1", ftScore: "0-1", result: "M", xg: 0.75, note: "Yüksek savunma çizgisi deplasmanda zorlandı" }
+          ],
+          last2Metrics: { ptsPerMatch: 0.50, gfAvg: 1.00, gaAvg: 1.50, momentumScore: 52 },
+          missingPlayers: [
+            { name: "Marc-André ter Stegen", pos: "Kaleci", reason: "Diz Tendon Sakatlığı", status: "Sakat", impactPct: 11, detail: "Geriden oyun kurulumu ve kurtarış yüzdesi" },
+            { name: "Marc Casadó", pos: "Merkez Orta Saha", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 10, detail: "Orta saha pres ve top kazanma" }
+          ],
+          radar: [94, 75, 92, 52, 79]
+        },
+        h2h: [
+          { date: "Ekim 2024", home: "RMA", away: "BAR", ht: "0-0", ft: "0-4", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Nisan 2024", home: "RMA", away: "BAR", ht: "1-1", ft: "3-2", cards: "6 Sarı, 0 Kırmızı" },
+          { date: "Ocak 2024", home: "RMA", away: "BAR", ht: "3-1", ft: "4-1", cards: "4 Sarı, 1 Kırmızı" }
+        ],
+        goalTimingHome: [10, 16, 22, 19, 25, 31],
+        goalTimingAway: [18, 24, 21, 22, 20, 23]
+      },
+      {
+        id: "atm-sev",
+        leagueId: "ES",
+        league: "LaLiga EA Sports · 14. Hafta",
+        time: "Pazar · 23:00",
+        stadium: "Riyadh Air Metropolitano (Madrid)",
+        referee: "Jesús Gil Manzano (Ort. 4.9 Sarı, 0.30 Kırmızı)",
+        home: {
+          code: "ATM", name: "Atlético Madrid", color: "#ef4444", bg: "linear-gradient(135deg, #991b1b, #1e3a8a)", rank: "3. Sıra (29P)",
+          venueStats: { played: 7, wins: 5, draws: 2, losses: 0, gf: 13, ga: 4, xg: 1.88, xga: 0.65, htLeadPct: 43, cleanSheetPct: 57, bttsPct: 43, over25Pct: 43 },
+          last10: ["G", "B", "M", "G", "M", "G", "G", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.20, gfAvg: 1.70, gaAvg: 0.70, xgAvg: 1.82, shotsOnTarget: 5.5 },
+          last2: [
+            { opponent: "Alavés (E)", htScore: "0-1", ftScore: "2-1", result: "G", xg: 2.05, note: "Griezmann ve Sørloth ile son 15 dk geri dönüşü" },
+            { opponent: "Mallorca (D)", htScore: "0-0", ftScore: "1-0", result: "G", xg: 1.35, note: "Julián Álvarez golü ve Oblak duvarı" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 1.50, gaAvg: 0.50, momentumScore: 91 },
+          missingPlayers: [
+            { name: "Robin Le Normand", pos: "Stoper", reason: "Kafa Travması Protokolü", status: "Sakat", impactPct: 11, detail: "Savunma hava hakimiyeti" },
+            { name: "Thomas Lemar", pos: "Orta Saha", reason: "Kas Sakatlığı", status: "Sakat", impactPct: 5, detail: "Rotasyon oyuncusu" }
+          ],
+          radar: [81, 93, 86, 91, 84]
+        },
+        away: {
+          code: "SEV", name: "Sevilla", color: "#f87171", bg: "linear-gradient(135deg, #b91c1c, #475569)", rank: "11. Sıra (18P)",
+          venueStats: { played: 7, wins: 1, draws: 3, losses: 3, gf: 7, ga: 11, xg: 1.10, xga: 1.58, htLeadPct: 14, cleanSheetPct: 28, bttsPct: 57, over25Pct: 57 },
+          last10: ["G", "M", "G", "B", "G", "M", "G", "M", "M", "G"],
+          last10Metrics: { ptsPerMatch: 1.60, gfAvg: 1.10, gaAvg: 1.30, xgAvg: 1.22, shotsOnTarget: 4.2 },
+          last2: [
+            { opponent: "Rayo Vallecano (E)", htScore: "1-0", ftScore: "1-0", result: "G", xg: 1.40, note: "Rakip 10 kişi kalınca skoru korudu" },
+            { opponent: "Leganés (D)", htScore: "0-0", ftScore: "0-1", result: "M", xg: 0.88, note: "82. dakikada penaltı golüyle mağlup" }
+          ],
+          last2Metrics: { ptsPerMatch: 1.50, gfAvg: 0.50, gaAvg: 0.50, momentumScore: 60 },
+          missingPlayers: [
+            { name: "Chidera Ejuke", pos: "Sol Kanat", reason: "Hamstring Sakatlığı", status: "Sakat", impactPct: 14, detail: "Bire bir çalım ve geçiş tehlikesi" },
+            { name: "Tanguy Nianzou", pos: "Stoper", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 12, detail: "Savunma merkezi" }
+          ],
+          radar: [68, 72, 66, 60, 74]
+        },
+        h2h: [
+          { date: "Şubat 2024", home: "SEV", away: "ATM", ht: "1-0", ft: "1-0", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Ocak 2024", home: "ATM", away: "SEV", ht: "0-0", ft: "1-0", cards: "4 Sarı, 0 Kırmızı" },
+          { date: "Aralık 2023", home: "ATM", away: "SEV", ht: "0-0", ft: "1-0", cards: "6 Sarı, 1 Kırmızı" }
+        ],
+        goalTimingHome: [12, 17, 19, 18, 22, 29],
+        goalTimingAway: [10, 14, 15, 16, 17, 19]
+      },
+
+      // 4. SERIE A (IT)
+      {
+        id: "int-nap",
+        leagueId: "IT",
+        league: "Serie A Enilive · Zirve Düellosu",
+        time: "Pazar · 22:45",
+        stadium: "Giuseppe Meazza (Milano)",
+        referee: "Maurizio Mariani (Ort. 4.6 Sarı, 0.22 Kırmızı)",
+        home: {
+          code: "INT", name: "Inter", color: "#3b82f6", bg: "linear-gradient(135deg, #1d4ed8, #0f172a)", rank: "2. Sıra (28P)",
+          venueStats: { played: 7, wins: 5, draws: 1, losses: 1, gf: 17, ga: 8, xg: 2.25, xga: 0.96, htLeadPct: 57, cleanSheetPct: 43, bttsPct: 57, over25Pct: 71 },
+          last10: ["G", "G", "G", "G", "G", "B", "G", "G", "B", "G"],
+          last10Metrics: { ptsPerMatch: 2.60, gfAvg: 2.30, gaAvg: 0.80, xgAvg: 2.22, shotsOnTarget: 6.4 },
+          last2: [
+            { opponent: "Verona (D)", htScore: "5-0", ftScore: "5-0", result: "G", xg: 3.15, note: "İlk yarıdan 5 golle ezici üstünlük" },
+            { opponent: "Arsenal (E - UCL)", htScore: "1-0", ftScore: "1-0", result: "G", xg: 1.25, note: "Hakan Çalhanoğlu penaltısı ve kusursuz savunma bloğu" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 3.00, gaAvg: 0.00, momentumScore: 96 },
+          missingPlayers: [
+            { name: "Carlos Augusto", pos: "Sol Kanat Bek", reason: "Uyluk Sakatlığı", status: "Sakat", impactPct: 8, detail: "Dimarco rotasyonu" }
+          ],
+          radar: [91, 90, 93, 96, 92]
+        },
+        away: {
+          code: "NAP", name: "Napoli", color: "#38bdf8", bg: "linear-gradient(135deg, #0284c7, #1e3a8a)", rank: "1. Sıra (29P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 10, ga: 4, xg: 1.62, xga: 0.84, htLeadPct: 50, cleanSheetPct: 67, bttsPct: 33, over25Pct: 50 },
+          last10: ["G", "B", "G", "G", "G", "G", "G", "M", "B", "G"],
+          last10Metrics: { ptsPerMatch: 2.30, gfAvg: 1.70, gaAvg: 0.60, xgAvg: 1.75, shotsOnTarget: 5.3 },
+          last2: [
+            { opponent: "Roma (E)", htScore: "0-0", ftScore: "1-0", result: "G", xg: 1.68, note: "Lukaku golüyle Conte tarzı taktik galibiyet" },
+            { opponent: "Atalanta (E)", htScore: "0-2", ftScore: "0-3", result: "M", xg: 0.95, note: "Hızlı geçiş hücumlarına karşı savunma zorlandı" }
+          ],
+          last2Metrics: { ptsPerMatch: 1.50, gfAvg: 0.50, gaAvg: 1.50, momentumScore: 68 },
+          missingPlayers: [
+            { name: "Stanislav Lobotka", pos: "Ön Libero", reason: "Kas Sakatlığı (Şüpheli)", status: "Sakat", impactPct: 12, detail: "Pas trafiği ve pres kırıcı merkez" }
+          ],
+          radar: [83, 89, 86, 68, 88]
+        },
+        h2h: [
+          { date: "Kasım 2024", home: "INT", away: "NAP", ht: "1-1", ft: "1-1", cards: "4 Sarı, 0 Kırmızı" },
+          { date: "Mart 2024", home: "INT", away: "NAP", ht: "1-0", ft: "1-1", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Ocak 2024", home: "NAP", away: "INT", ht: "0-0", ft: "0-1", cards: "6 Sarı, 1 Kırmızı" }
+        ],
+        goalTimingHome: [15, 22, 24, 18, 21, 24],
+        goalTimingAway: [12, 16, 18, 21, 23, 22]
+      },
+      {
+        id: "mil-juv",
+        leagueId: "IT",
+        league: "Serie A Enilive · 13. Hafta",
+        time: "Cumartesi · 20:00",
+        stadium: "San Siro (Milano)",
+        referee: "Daniele Chiffi (Ort. 4.2 Sarı, 0.19 Kırmızı)",
+        home: {
+          code: "MIL", name: "AC Milan", color: "#ef4444", bg: "linear-gradient(135deg, #991b1b, #111827)", rank: "7. Sıra (19P)",
+          venueStats: { played: 6, wins: 3, draws: 2, losses: 1, gf: 11, ga: 5, xg: 1.92, xga: 0.95, htLeadPct: 50, cleanSheetPct: 50, bttsPct: 50, over25Pct: 67 },
+          last10: ["G", "M", "G", "M", "G", "G", "M", "G", "G", "B"],
+          last10Metrics: { ptsPerMatch: 1.90, gfAvg: 1.90, gaAvg: 1.20, xgAvg: 1.94, shotsOnTarget: 5.9 },
+          last2: [
+            { opponent: "Cagliari (D)", htScore: "2-1", ftScore: "3-3", result: "B", xg: 2.30, note: "Leão 2 gol attı ancak yan top savunması 3 gol yedi" },
+            { opponent: "Real Madrid (D - UCL)", htScore: "2-1", ftScore: "3-1", result: "G", xg: 2.48, note: "Büyük maçlarda çok yüksek geçiş verimi" }
+          ],
+          last2Metrics: { ptsPerMatch: 2.00, gfAvg: 3.00, gaAvg: 2.00, momentumScore: 82 },
+          missingPlayers: [
+            { name: "Ismaël Bennacer", pos: "Merkez Orta Saha", reason: "Baldır Sakatlığı", status: "Sakat", impactPct: 11, detail: "Derin oyun kurucu" },
+            { name: "Alessandro Florenzi", pos: "Sağ Bek", reason: "Diz Sakatlığı", status: "Sakat", impactPct: 6, detail: "Savunma rotasyonu" }
+          ],
+          radar: [86, 72, 77, 82, 83]
+        },
+        away: {
+          code: "JUV", name: "Juventus", color: "#e2e8f0", bg: "linear-gradient(135deg, #334155, #0f172a)", rank: "6. Sıra (25P)",
+          venueStats: { played: 6, wins: 3, draws: 3, losses: 0, gf: 10, ga: 4, xg: 1.54, xga: 0.72, htLeadPct: 33, cleanSheetPct: 67, bttsPct: 33, over25Pct: 33 },
+          last10: ["B", "G", "G", "B", "G", "M", "B", "B", "G", "G"],
+          last10Metrics: { ptsPerMatch: 1.90, gfAvg: 1.50, gaAvg: 0.60, xgAvg: 1.58, shotsOnTarget: 4.9 },
+          last2: [
+            { opponent: "Torino (E)", htScore: "1-0", ftScore: "2-0", result: "G", xg: 1.90, note: "Kenan Yıldız golü ve sıfır pozisyon veren savunma" },
+            { opponent: "Udinese (D)", htScore: "2-0", ftScore: "2-0", result: "G", xg: 1.65, note: "İlk yarıdan fişi çeken disiplinli blok" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 2.00, gaAvg: 0.00, momentumScore: 89 },
+          missingPlayers: [
+            { name: "Dušan Vlahović", pos: "Santrfor", reason: "Uyluk Sakatlığı", status: "Sakat", impactPct: 22, detail: "Takımın 1 numaralı golcüsü" },
+            { name: "Gleison Bremer", pos: "Stoper", reason: "Ön Çapraz Bağ", status: "Sakat", impactPct: 16, detail: "Savunma lideri" }
+          ],
+          radar: [74, 91, 80, 89, 62]
+        },
+        h2h: [
+          { date: "Nisan 2024", home: "JUV", away: "MIL", ht: "0-0", ft: "0-0", cards: "3 Sarı, 0 Kırmızı" },
+          { date: "Ekim 2023", home: "MIL", away: "JUV", ht: "0-0", ft: "0-1", cards: "5 Sarı, 1 Kırmızı" },
+          { date: "Mayıs 2023", home: "JUV", away: "MIL", ht: "0-1", ft: "0-1", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [14, 19, 21, 18, 22, 23],
+        goalTimingAway: [11, 17, 19, 14, 18, 20]
+      },
+
+      // 5. BUNDESLIGA (DE)
+      {
+        id: "bvb-fcb",
+        leagueId: "DE",
+        league: "Bundesliga · Der Klassiker",
+        time: "Cumartesi · 20:30",
+        stadium: "Signal Iduna Park (Dortmund)",
+        referee: "Sven Jablonski (Ort. 4.1 Sarı, 0.20 Kırmızı)",
+        home: {
+          code: "BVB", name: "Borussia Dortmund", color: "#facc15", bg: "linear-gradient(135deg, #ca8a04, #1e293b)", rank: "5. Sıra (19P)",
+          venueStats: { played: 6, wins: 6, draws: 0, losses: 0, gf: 18, ga: 5, xg: 2.52, xga: 0.88, htLeadPct: 67, cleanSheetPct: 50, bttsPct: 67, over25Pct: 83 },
+          last10: ["G", "M", "G", "M", "M", "G", "G", "M", "G", "G"],
+          last10Metrics: { ptsPerMatch: 1.80, gfAvg: 2.20, gaAvg: 1.50, xgAvg: 2.08, shotsOnTarget: 6.3 },
+          last2: [
+            { opponent: "Freiburg (E)", htScore: "2-0", ftScore: "4-0", result: "G", xg: 2.80, note: "Evinde 6'da 6 galibiyet, kusursuz iç saha baskısı" },
+            { opponent: "Mainz (D)", htScore: "1-2", ftScore: "1-3", result: "M", xg: 1.10, note: "Emre Can kırmızı kartı sonrası deplasman kaybı" }
+          ],
+          last2Metrics: { ptsPerMatch: 1.50, gfAvg: 2.50, gaAvg: 1.50, momentumScore: 76 },
+          missingPlayers: [
+            { name: "Emre Can", pos: "Ön Libero (Kaptan)", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 14, detail: "Merkez savunma önü kesici" },
+            { name: "Karim Adeyemi", pos: "Kanat Forvet", reason: "Kas Lif Yırtığı", status: "Sakat", impactPct: 12, detail: "Kontra atak hızı" }
+          ],
+          radar: [88, 72, 76, 76, 74]
+        },
+        away: {
+          code: "FCB", name: "Bayern Münih", color: "#ef4444", bg: "linear-gradient(135deg, #b91c1c, #1e3a8a)", rank: "1. Sıra (29P)",
+          venueStats: { played: 6, wins: 5, draws: 1, losses: 0, gf: 22, ga: 5, xg: 2.78, xga: 0.79, htLeadPct: 67, cleanSheetPct: 67, bttsPct: 33, over25Pct: 83 },
+          last10: ["B", "M", "G", "G", "G", "G", "G", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.50, gfAvg: 2.90, gaAvg: 0.60, xgAvg: 2.75, shotsOnTarget: 7.8 },
+          last2: [
+            { opponent: "Augsburg (E)", htScore: "0-0", ftScore: "3-0", result: "G", xg: 3.20, note: "Harry Kane hat-trick ve üst üste 6 maç gol yemedi" },
+            { opponent: "St. Pauli (D)", htScore: "1-0", ftScore: "1-0", result: "G", xg: 1.85, note: "Musiala uzaktan şut ve tam saha top kontrolü" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 2.00, gaAvg: 0.00, momentumScore: 97 },
+          missingPlayers: [
+            { name: "João Palhinha", pos: "Ön Libero", reason: "Kasık Sakatlığı", status: "Sakat", impactPct: 11, detail: "İkili mücadele ve geçiş kesici" },
+            { name: "Aleksandar Pavlović", pos: "Orta Saha", reason: "Köprücük Kemiği", status: "Sakat", impactPct: 9, detail: "Pas temposu" }
+          ],
+          radar: [96, 92, 94, 97, 80]
+        },
+        h2h: [
+          { date: "Mart 2024", home: "FCB", away: "BVB", ht: "0-1", ft: "0-2", cards: "3 Sarı, 0 Kırmızı" },
+          { date: "Kasım 2023", home: "BVB", away: "FCB", ht: "0-2", ft: "0-4", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Nisan 2023", home: "FCB", away: "BVB", ht: "3-0", ft: "4-2", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [17, 23, 24, 19, 22, 26],
+        goalTimingAway: [21, 25, 23, 22, 26, 29]
+      },
+      {
+        id: "b04-rbl",
+        leagueId: "DE",
+        league: "Bundesliga · 12. Hafta",
+        time: "Cumartesi · 17:30",
+        stadium: "BayArena (Leverkusen)",
+        referee: "Felix Zwayer (Ort. 4.5 Sarı, 0.23 Kırmızı)",
+        home: {
+          code: "B04", name: "Bayer Leverkusen", color: "#f43f5e", bg: "linear-gradient(135deg, #be123c, #0f172a)", rank: "4. Sıra (20P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 17, ga: 10, xg: 2.45, xga: 1.15, htLeadPct: 50, cleanSheetPct: 17, bttsPct: 83, over25Pct: 83 },
+          last10: ["B", "B", "G", "B", "B", "M", "B", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 1.70, gfAvg: 2.30, gaAvg: 1.40, xgAvg: 2.36, shotsOnTarget: 6.9 },
+          last2: [
+            { opponent: "Heidenheim (E)", htScore: "2-2", ftScore: "5-2", result: "G", xg: 3.10, note: "Schick hat-trick ve Florian Wirtz resitali" },
+            { opponent: "Bochum (D)", htScore: "1-0", ftScore: "1-1", result: "B", xg: 1.95, note: "89. dakikada yenilen golle puan kaybı" }
+          ],
+          last2Metrics: { ptsPerMatch: 2.00, gfAvg: 3.00, gaAvg: 1.50, momentumScore: 83 },
+          missingPlayers: [
+            { name: "Victor Boniface", pos: "Santrfor", reason: "Uyluk Sakatlığı", status: "Sakat", impactPct: 16, detail: "Fiziksel pivot santrfor" },
+            { name: "Amine Adli", pos: "Kanat Forvet", reason: "Kaval Kemiği Kırığı", status: "Sakat", impactPct: 9, detail: "Hücum derinliği" }
+          ],
+          radar: [90, 71, 79, 83, 75]
+        },
+        away: {
+          code: "RBL", name: "RB Leipzig", color: "#38bdf8", bg: "linear-gradient(135deg, #1d4ed8, #be123c)", rank: "3. Sıra (21P)",
+          venueStats: { played: 6, wins: 3, draws: 1, losses: 2, gf: 10, ga: 8, xg: 1.58, xga: 1.25, htLeadPct: 33, cleanSheetPct: 50, bttsPct: 50, over25Pct: 67 },
+          last10: ["G", "G", "G", "M", "G", "M", "M", "B", "M", "M"],
+          last10Metrics: { ptsPerMatch: 1.30, gfAvg: 1.50, gaAvg: 1.40, xgAvg: 1.62, shotsOnTarget: 5.1 },
+          last2: [
+            { opponent: "Hoffenheim (D)", htScore: "2-1", ftScore: "3-4", result: "M", xg: 1.85, note: "3 kez öne geçmesine rağmen savunma çöktü" },
+            { opponent: "M'gladbach (E)", htScore: "0-0", ftScore: "0-0", result: "B", xg: 1.30, note: "Xavi Simons yokluğunda yaratıcılık sıkıntısı" }
+          ],
+          last2Metrics: { ptsPerMatch: 0.50, gfAvg: 1.50, gaAvg: 2.00, momentumScore: 44 },
+          missingPlayers: [
+            { name: "Xavi Simons", pos: "10 Numara / Kanat", reason: "Ayak Bileği Bağ Sakatlığı", status: "Sakat", impactPct: 21, detail: "Takımın ana oyun kurucusu" },
+            { name: "David Raum", pos: "Sol Bek", reason: "Bilek Sakatlığı", status: "Sakat", impactPct: 12, detail: "Asist ve duran top uzmanı" }
+          ],
+          radar: [78, 75, 68, 44, 67]
+        },
+        h2h: [
+          { date: "Ağustos 2024", home: "B04", away: "RBL", ht: "2-1", ft: "2-3", cards: "6 Sarı, 1 Kırmızı" },
+          { date: "Ocak 2024", home: "RBL", away: "B04", ht: "1-0", ft: "2-3", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Ağustos 2023", home: "B04", away: "RBL", ht: "2-1", ft: "3-2", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [18, 22, 25, 20, 23, 28],
+        goalTimingAway: [15, 19, 17, 18, 16, 19]
+      },
+
+      // 6. LIGUE 1 (FR)
+      {
+        id: "psg-om",
+        leagueId: "FR",
+        league: "Ligue 1 McDonald's · Le Classique",
+        time: "Pazar · 22:45",
+        stadium: "Parc des Princes (Paris)",
+        referee: "François Letexier (Ort. 4.3 Sarı, 0.25 Kırmızı)",
+        home: {
+          code: "PSG", name: "Paris Saint-Germain", color: "#38bdf8", bg: "linear-gradient(135deg, #1e3a8a, #be123c)", rank: "1. Sıra (32P)",
+          venueStats: { played: 6, wins: 6, draws: 0, losses: 0, gf: 20, ga: 4, xg: 2.85, xga: 0.72, htLeadPct: 67, cleanSheetPct: 50, bttsPct: 50, over25Pct: 83 },
+          last10: ["G", "B", "G", "G", "G", "B", "G", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.60, gfAvg: 2.70, gaAvg: 0.80, xgAvg: 2.68, shotsOnTarget: 7.6 },
+          last2: [
+            { opponent: "Toulouse (E)", htScore: "1-0", ftScore: "3-0", result: "G", xg: 2.75, note: "João Neves & Barcola ile tam saha dominasyon" },
+            { opponent: "Angers (D)", htScore: "4-0", ftScore: "4-2", result: "G", xg: 3.10, note: "İlk 45 dakikada 4 golle maçı bitirdi" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 3.50, gaAvg: 1.00, momentumScore: 95 },
+          missingPlayers: [
+            { name: "Lucas Hernández", pos: "Sol Bek / Stoper", reason: "Çapraz Bağ", status: "Sakat", impactPct: 9, detail: "Savunma sertliği" },
+            { name: "Nuno Mendes", pos: "Sol Bek", reason: "Bilek Burkulması", status: "Sakat", impactPct: 10, detail: "Sol kanat bindirmeleri" }
+          ],
+          radar: [95, 87, 93, 95, 81]
+        },
+        away: {
+          code: "OM", name: "Marseille", color: "#60a5fa", bg: "linear-gradient(135deg, #0284c7, #334155)", rank: "2. Sıra (23P)",
+          venueStats: { played: 7, wins: 6, draws: 0, losses: 1, gf: 19, ga: 7, xg: 2.05, xga: 1.12, htLeadPct: 57, cleanSheetPct: 28, bttsPct: 71, over25Pct: 86 },
+          last10: ["G", "M", "B", "G", "M", "G", "M", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 1.90, gfAvg: 2.20, gaAvg: 1.20, xgAvg: 1.95, shotsOnTarget: 5.8 },
+          last2: [
+            { opponent: "Lens (D)", htScore: "0-0", ftScore: "3-1", result: "G", xg: 2.15, note: "İkinci yarıda Greenwood ve Højbjerg ile 3 gol" },
+            { opponent: "Auxerre (E)", htScore: "0-3", ftScore: "1-3", result: "M", xg: 1.40, note: "İlk yarıda savunma arkasına atılan toplarda çöktü" }
+          ],
+          last2Metrics: { ptsPerMatch: 1.50, gfAvg: 2.00, gaAvg: 2.00, momentumScore: 74 },
+          missingPlayers: [
+            { name: "Derek Cornelius", pos: "Stoper", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 12, detail: "Sol stoper dengesi" },
+            { name: "Amine Harit", pos: "10 Numara", reason: "Kırmızı Kart Cezalısı", status: "Cezalı", impactPct: 14, detail: "Hücum bağlantı oyuncusu" }
+          ],
+          radar: [85, 73, 80, 74, 74]
+        },
+        h2h: [
+          { date: "Ekim 2024", home: "OM", away: "PSG", ht: "0-3", ft: "0-3", cards: "4 Sarı, 1 Kırmızı" },
+          { date: "Mart 2024", home: "OM", away: "PSG", ht: "0-0", ft: "0-2", cards: "5 Sarı, 1 Kırmızı" },
+          { date: "Eylül 2023", home: "PSG", away: "OM", ht: "2-0", ft: "4-0", cards: "3 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [19, 24, 25, 20, 23, 27],
+        goalTimingAway: [14, 18, 17, 21, 22, 23]
+      },
+      {
+        id: "mon-lyo",
+        leagueId: "FR",
+        league: "Ligue 1 McDonald's · 13. Hafta",
+        time: "Cumartesi · 21:00",
+        stadium: "Stade Louis-II (Monako)",
+        referee: "Clément Turpin (Ort. 4.0 Sarı, 0.21 Kırmızı)",
+        home: {
+          code: "ASM", name: "AS Monaco", color: "#ef4444", bg: "linear-gradient(135deg, #dc2626, #334155)", rank: "2. Sıra (26P)",
+          venueStats: { played: 6, wins: 4, draws: 1, losses: 1, gf: 11, ga: 5, xg: 2.08, xga: 0.88, htLeadPct: 33, cleanSheetPct: 50, bttsPct: 50, over25Pct: 67 },
+          last10: ["G", "G", "G", "B", "M", "M", "G", "G", "G", "G"],
+          last10Metrics: { ptsPerMatch: 2.20, gfAvg: 1.90, gaAvg: 0.90, xgAvg: 2.02, shotsOnTarget: 6.1 },
+          last2: [
+            { opponent: "Brest (E)", htScore: "2-0", ftScore: "3-2", result: "G", xg: 2.45, note: "Akliouche ve Golovin ile yüksek yaratıcılık" },
+            { opponent: "Strasbourg (D)", htScore: "0-1", ftScore: "3-1", result: "G", xg: 2.30, note: "Son 15 dakikada 3 golle müthiş geri dönüş" }
+          ],
+          last2Metrics: { ptsPerMatch: 3.00, gfAvg: 3.00, gaAvg: 1.50, momentumScore: 90 },
+          missingPlayers: [
+            { name: "Denis Zakaria", pos: "Ön Libero (Kaptan)", reason: "Kas Sakatlığı", status: "Sakat", impactPct: 15, detail: "Orta saha omurgası" },
+            { name: "Folarin Balogun", pos: "Santrfor", reason: "Omuz Çıkığı", status: "Sakat", impactPct: 12, detail: "Derin koşu tehdidi" }
+          ],
+          radar: [85, 83, 84, 90, 73]
+        },
+        away: {
+          code: "OL", name: "Olympique Lyon", color: "#60a5fa", bg: "linear-gradient(135deg, #1d4ed8, #991b1b)", rank: "5. Sıra (19P)",
+          venueStats: { played: 6, wins: 2, draws: 3, losses: 1, gf: 9, ga: 6, xg: 1.56, xga: 1.15, htLeadPct: 33, cleanSheetPct: 33, bttsPct: 67, over25Pct: 50 },
+          last10: ["G", "G", "G", "B", "B", "B", "G", "B", "G", "B"],
+          last10Metrics: { ptsPerMatch: 2.00, gfAvg: 1.80, gaAvg: 1.00, xgAvg: 1.84, shotsOnTarget: 5.6 },
+          last2: [
+            { opponent: "Saint-Étienne (E)", htScore: "1-0", ftScore: "1-0", result: "G", xg: 2.15, note: "Lacazette golüyle derbi zaferi" },
+            { opponent: "Reims (D)", htScore: "1-0", ftScore: "1-1", result: "B", xg: 1.52, note: "Rayan Cherki etkili ancak skoru koruyamadı" }
+          ],
+          last2Metrics: { ptsPerMatch: 2.00, gfAvg: 1.00, gaAvg: 0.50, momentumScore: 79 },
+          missingPlayers: [
+            { name: "Nemanja Matić", pos: "Ön Libero", reason: "Sarı Kart Cezalısı", status: "Cezalı", impactPct: 11, detail: "Oyun soğutma ve pas merkezi" }
+          ],
+          radar: [81, 78, 82, 79, 89]
+        },
+        h2h: [
+          { date: "Ağustos 2024", home: "OL", away: "ASM", ht: "0-0", ft: "0-2", cards: "4 Sarı, 0 Kırmızı" },
+          { date: "Nisan 2024", home: "OL", away: "ASM", ht: "2-1", ft: "3-2", cards: "5 Sarı, 0 Kırmızı" },
+          { date: "Aralık 2023", home: "ASM", away: "OL", ht: "0-0", ft: "0-1", cards: "4 Sarı, 0 Kırmızı" }
+        ],
+        goalTimingHome: [14, 18, 20, 19, 23, 27],
+        goalTimingAway: [15, 19, 18, 17, 21, 22]
+      }
+    ];
+
+    // App State
+    const state = {
+      selectedLeagueId: "TR",
+      selectedMatchId: "gs-fb",
+      activeTab: "report",
+      weights: {
+        form10: 25,
+        form2: 20,
+        squad: 25,
+        venue: 30
+      }
+    };
+
+    let radarChartInstance = null;
+    let timingChartInstance = null;
+
+    function factorial(n) {
+      if (n <= 1) return 1;
+      let res = 1;
+      for (let i = 2; i <= n; i++) res *= i;
+      return res;
+    }
+
+    function poissonProb(k, lambda) {
+      return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+    }
+
+    // Core Machine Learning Engine
+    function computeMatchPrediction(match, weights) {
+      const totalW = Math.max(1, weights.form10 + weights.form2 + weights.squad + weights.venue);
+      const w10 = weights.form10 / totalW;
+      const w2 = weights.form2 / totalW;
+      const wSq = weights.squad / totalW;
+      const wVen = weights.venue / totalW;
+
+      const homeMissingImpact = match.home.missingPlayers.reduce((acc, p) => acc + p.impactPct, 0) / 100;
+      const awayMissingImpact = match.away.missingPlayers.reduce((acc, p) => acc + p.impactPct, 0) / 100;
+
+      const homeForm10Xg = (match.home.last10Metrics.xgAvg * 0.65) + (match.home.last10Metrics.gfAvg * 0.35);
+      const awayForm10Xg = (match.away.last10Metrics.xgAvg * 0.65) + (match.away.last10Metrics.gfAvg * 0.35);
+
+      const homeForm2Xg = (match.home.last2Metrics.gfAvg * 0.45) + (match.home.last2Metrics.momentumScore / 45);
+      const awayForm2Xg = (match.away.last2Metrics.gfAvg * 0.45) + (match.away.last2Metrics.momentumScore / 45);
+
+      const homeVenueXg = (match.home.venueStats.xg * 0.6) + (match.away.venueStats.xga * 0.4) + 0.18;
+      const awayVenueXg = (match.away.venueStats.xg * 0.6) + (match.home.venueStats.xga * 0.4);
+
+      const homeSquadXg = homeVenueXg * (1 - (homeMissingImpact * 0.85)) * (1 + (awayMissingImpact * 0.35));
+      const awaySquadXg = awayVenueXg * (1 - (awayMissingImpact * 0.85)) * (1 + (homeMissingImpact * 0.35));
+
+      const lambdaHome = Math.max(0.45, Math.min(3.6,
+        (homeForm10Xg * w10) + (homeForm2Xg * w2) + (homeSquadXg * wSq) + (homeVenueXg * wVen)
+      ));
+      const lambdaAway = Math.max(0.40, Math.min(3.4,
+        (awayForm10Xg * w10) + (awayForm2Xg * w2) + (awaySquadXg * wSq) + (awayVenueXg * wVen)
+      ));
+
+      let pHomeWin = 0, pDraw = 0, pAwayWin = 0;
+      let pOver25 = 0, pOver15 = 0, pOver35 = 0, pBttsYes = 0;
+      const exactScores = [];
+
+      for (let h = 0; h <= 5; h++) {
+        for (let a = 0; a <= 5; a++) {
+          let p = poissonProb(h, lambdaHome) * poissonProb(a, lambdaAway);
+          if (h > a) pHomeWin += p;
+          else if (h === a) pDraw += p;
+          else pAwayWin += p;
+
+          if ((h + a) > 2.5) pOver25 += p;
+          if ((h + a) > 1.5) pOver15 += p;
+          if ((h + a) > 3.5) pOver35 += p;
+          if (h >= 1 && a >= 1) pBttsYes += p;
+
+          exactScores.push({ score: `${h} - ${a}`, h, a, prob: p * 100 });
+        }
+      }
+
+      const sum1X2 = pHomeWin + pDraw + pAwayWin || 1;
+      const homePct = Math.round((pHomeWin / sum1X2) * 100);
+      const drawPct = Math.round((pDraw / sum1X2) * 100);
+      const awayPct = Math.max(0, 100 - homePct - drawPct);
+
+      const over25Pct = Math.min(94, Math.max(12, Math.round((pOver25 / sum1X2) * 100)));
+      const over15Pct = Math.min(97, Math.max(25, Math.round((pOver15 / sum1X2) * 100)));
+      const over35Pct = Math.min(85, Math.max(8, Math.round((pOver35 / sum1X2) * 100)));
+      const bttsPct = Math.min(93, Math.max(14, Math.round((pBttsYes / sum1X2) * 100)));
+
+      exactScores.sort((x, y) => y.prob - x.prob);
+      const topScores = exactScores.slice(0, 4);
+
+      const htHomeLambda = lambdaHome * (0.41 + (match.home.venueStats.htLeadPct / 500));
+      const htAwayLambda = lambdaAway * (0.40 + (match.away.venueStats.htLeadPct / 520));
+
+      let htHome = 0, htDraw = 0, htAway = 0, htOver05 = 0, htOver15 = 0;
+      const htScores = [];
+      for (let h = 0; h <= 3; h++) {
+        for (let a = 0; a <= 3; a++) {
+          const p = poissonProb(h, htHomeLambda) * poissonProb(a, htAwayLambda);
+          if (h > a) htHome += p;
+          else if (h === a) htDraw += p;
+          else htAway += p;
+          if (h + a >= 1) htOver05 += p;
+          if (h + a >= 2) htOver15 += p;
+          htScores.push({ score: `${h} - ${a}`, prob: p * 100 });
+        }
+      }
+      const sumHT = htHome + htDraw + htAway || 1;
+      const ht1Pct = Math.round((htHome / sumHT) * 100);
+      const htXPct = Math.round((htDraw / sumHT) * 100);
+      const ht2Pct = Math.max(0, 100 - ht1Pct - htXPct);
+      const htOver05Pct = Math.min(95, Math.round((htOver05 / sumHT) * 100));
+      const htOver15Pct = Math.min(82, Math.round((htOver15 / sumHT) * 100));
+      htScores.sort((x, y) => y.prob - x.prob);
+
+      const rawHtFt = [
+        { code: "1 / 1", label: `${match.home.code} / ${match.home.code}`, val: (ht1Pct * 0.72 + homePct * 0.28) * (homePct / 100) },
+        { code: "X / 1", label: `Beraberlik / ${match.home.code}`, val: (htXPct * 0.65) * (homePct / 100) },
+        { code: "2 / 1", label: `${match.away.code} / ${match.home.code} (Geri Dönüş)`, val: (ht2Pct * 0.25) * (homePct / 100) },
+        { code: "1 / X", label: `${match.home.code} / Beraberlik`, val: (ht1Pct * 0.35) * (drawPct / 100) },
+        { code: "X / X", label: `Beraberlik / Beraberlik`, val: (htXPct * 0.75) * (drawPct / 100) },
+        { code: "2 / X", label: `${match.away.code} / Beraberlik`, val: (ht2Pct * 0.35) * (drawPct / 100) },
+        { code: "1 / 2", label: `${match.home.code} / ${match.away.code} (Geri Dönüş)`, val: (ht1Pct * 0.22) * (awayPct / 100) },
+        { code: "X / 2", label: `Beraberlik / ${match.away.code}`, val: (htXPct * 0.62) * (awayPct / 100) },
+        { code: "2 / 2", label: `${match.away.code} / ${match.away.code}`, val: (ht2Pct * 0.72 + awayPct * 0.28) * (awayPct / 100) }
+      ];
+      const htFtSum = rawHtFt.reduce((s, item) => s + item.val, 0) || 1;
+      const htFtMatrix = rawHtFt.map(item => ({
+        ...item,
+        pct: Math.round((item.val / htFtSum) * 100)
+      }));
+
+      const maxOutcome = Math.max(homePct, drawPct, awayPct, over25Pct, bttsPct);
+      const confidence = Math.min(94, Math.max(68, Math.round(maxOutcome * 0.65 + 31)));
+
+      let mainResultVerdict = `${match.home.name} Kazanır (MS 1)`;
+      if (awayPct > homePct && awayPct > drawPct) {
+        mainResultVerdict = `${match.away.name} Kazanır (MS 2)`;
+      } else if (drawPct >= homePct && drawPct >= awayPct) {
+        mainResultVerdict = `Yüksek Beraberlik Eğilimi (MS X)`;
+      } else if (Math.abs(homePct - awayPct) <= 7) {
+        mainResultVerdict = homePct >= awayPct
+          ? `${match.home.name} Yenilmez (1X Çifte Şans)`
+          : `${match.away.name} Yenilmez (X2 Çifte Şans)`;
+      }
+
+      return {
+        lambdaHome,
+        lambdaAway,
+        homePct,
+        drawPct,
+        awayPct,
+        over15Pct,
+        over25Pct,
+        over35Pct,
+        bttsPct,
+        topScores,
+        ht1Pct,
+        htXPct,
+        ht2Pct,
+        htOver05Pct,
+        htOver15Pct,
+        topHtScore: htScores[0],
+        htFtMatrix,
+        confidence,
+        mainResultVerdict,
+        homeMissingImpactPct: Math.round(homeMissingImpact * 100),
+        awayMissingImpactPct: Math.round(awayMissingImpact * 100)
+      };
+    }
+
+    function selectLeague(leagueId) {
+      state.selectedLeagueId = leagueId;
+      const leagueMatches = MATCHES.filter(m => m.leagueId === leagueId);
+      if (leagueMatches.length > 0 && !leagueMatches.some(m => m.id === state.selectedMatchId)) {
+        state.selectedMatchId = leagueMatches[0].id;
+      }
+      updateAllViews();
+    }
+
+    // Render 6-League Filter Bars (both above phone and inside iOS Native Header) + Matches
+    function renderMatchSelectors() {
+      // 1. Desktop 6-League Grid Bar
+      const desktopLeagueBar = document.getElementById("desktopLeagueBar");
+      desktopLeagueBar.innerHTML = LEAGUES.map(lg => {
+        const active = lg.id === state.selectedLeagueId;
+        return `
+          <button data-league-id="${lg.id}" class="league-select-btn px-2.5 py-1.5 rounded-xl border text-left transition flex items-center justify-between ${
+            active
+              ? "bg-emerald-500/20 border-emerald-500/60 text-white shadow-sm"
+              : "bg-slate-900/75 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+          }">
+            <div class="flex items-center gap-1.5 truncate">
+              <span class="text-sm">${lg.flag}</span>
+              <div class="truncate">
+                <div class="text-[11px] font-bold leading-tight truncate">${lg.name}</div>
+                <div class="text-[9px] text-slate-400 truncate">${lg.country}</div>
+              </div>
+            </div>
+            <span class="w-1.5 h-1.5 rounded-full shrink-0 ${active ? "bg-emerald-400" : "bg-slate-700"}"></span>
+          </button>
+        `;
+      }).join("");
+
+      // 2. Inside-iPhone Horizontal "Lig Vitrinleri" Carousel
+      const iosLeagueCarousel = document.getElementById("iosLeagueCarousel");
+      iosLeagueCarousel.innerHTML = LEAGUES.map(lg => {
+        const active = lg.id === state.selectedLeagueId;
+        return `
+          <button data-league-id="${lg.id}" class="league-select-btn shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-semibold transition flex items-center gap-1 ${
+            active
+              ? "bg-emerald-500 text-slate-950 border-emerald-400 font-bold shadow"
+              : "bg-slate-900/90 text-slate-300 border-slate-800 hover:border-slate-700"
+          }">
+            <span>${lg.flag}</span>
+            <span>${lg.name}</span>
+          </button>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".league-select-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectLeague(btn.getAttribute("data-league-id"));
+        });
+      });
+
+      // 3. Filter Matches for Active League
+      const leagueMatches = MATCHES.filter(m => m.leagueId === state.selectedLeagueId);
+
+      const container = document.getElementById("matchSelectorContainer");
+      container.innerHTML = leagueMatches.map(m => {
+        const active = m.id === state.selectedMatchId;
+        return `
+          <button data-match-id="${m.id}" class="match-pill-btn text-left p-2.5 rounded-xl border transition flex items-center justify-between ${
+            active
+              ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-md shadow-emerald-950/50"
+              : "bg-slate-900/70 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+          }">
+            <div class="truncate pr-1">
+              <div class="text-xs font-bold truncate">${m.home.code} vs ${m.away.code}</div>
+              <div class="text-[10px] text-slate-400 truncate">${m.home.name} - ${m.away.name}</div>
+            </div>
+            <span class="w-2 h-2 rounded-full ${active ? "bg-emerald-400" : "bg-slate-700"}"></span>
+          </button>
+        `;
+      }).join("");
+
+      // 4. Inside-iPhone Match Switcher Pills
+      const iosFixtureSwitcher = document.getElementById("iosFixtureSwitcher");
+      iosFixtureSwitcher.innerHTML = leagueMatches.map(m => {
+        const active = m.id === state.selectedMatchId;
+        return `
+          <button data-match-id="${m.id}" class="match-pill-btn py-1 px-2 rounded-lg border text-[10px] font-semibold transition truncate text-center ${
+            active
+              ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+              : "bg-slate-900/70 border-slate-800/90 text-slate-400 hover:text-slate-200"
+          }">
+            ${m.home.name} - ${m.away.name}
+          </button>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".match-pill-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.selectedMatchId = btn.getAttribute("data-match-id");
+          updateAllViews();
+        });
+      });
+    }
+
+    // Render active iOS screen inside the iPhone simulator
+    function renderIosScreen(match, pred) {
+      document.getElementById("activeMatchBadge").textContent = match.league;
+      document.getElementById("islandConfidence").textContent = `%${pred.confidence} GÜVEN`;
+      document.getElementById("iosLeagueTitle").innerHTML = `<i data-lucide="shield-check" class="w-3 h-3"></i> ${match.league}`;
+      document.getElementById("iosMatchTime").textContent = match.time;
+      document.getElementById("iosStadiumLabel").textContent = match.stadium;
+
+      const homeBadge = document.getElementById("iosHomeBadge");
+      homeBadge.textContent = match.home.code;
+      homeBadge.style.background = match.home.bg;
+
+      const awayBadge = document.getElementById("iosAwayBadge");
+      awayBadge.textContent = match.away.code;
+      awayBadge.style.background = match.away.bg;
+
+      document.getElementById("iosHomeName").textContent = match.home.name;
+      document.getElementById("iosHomeRank").textContent = `Ev · ${match.home.rank}`;
+      document.getElementById("iosAwayName").textContent = match.away.name;
+      document.getElementById("iosAwayRank").textContent = `Dep · ${match.away.rank}`;
+
+      document.getElementById("iosPredictedScorePill").textContent = pred.topScores[0].score;
+      document.getElementById("iosTotalXgLabel").textContent = `${(pred.lambdaHome + pred.lambdaAway).toFixed(2)} xG`;
+
+      const viewport = document.getElementById("iosScreenViewport");
+
+      if (state.activeTab === "report") {
+        const sortedHtFt = [...pred.htFtMatrix].sort((a, b) => b.pct - a.pct);
+        const topHtFt = sortedHtFt[0];
+
+        viewport.innerHTML = `
+          <!-- Primary Machine Learning Verdict Card -->
+          <div class="ios-card p-3.5 bg-gradient-to-br from-emerald-950/60 via-slate-900/90 to-slate-900 border-emerald-500/35">
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <i data-lucide="cpu" class="w-3 h-3"></i> Ana Makine Tahmin Raporu
+              </span>
+              <span class="text-[11px] mono text-emerald-400 font-bold">Güven: %${pred.confidence}</span>
+            </div>
+
+            <div class="text-sm font-extrabold text-white mb-2.5">${pred.mainResultVerdict}</div>
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div class="text-[10px] text-slate-400">Karşılıklı Gol</div>
+                <div class="text-xs font-extrabold mt-0.5 ${pred.bttsPct >= 55 ? "text-emerald-400" : "text-amber-400"}">
+                  ${pred.bttsPct >= 52 ? "KG VAR" : "KG YOK"}
+                </div>
+                <div class="text-[11px] mono text-slate-300 mt-0.5">%${pred.bttsPct >= 52 ? pred.bttsPct : (100 - pred.bttsPct)}</div>
+              </div>
+
+              <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div class="text-[10px] text-slate-400">2.5 Gol Barajı</div>
+                <div class="text-xs font-extrabold mt-0.5 ${pred.over25Pct >= 53 ? "text-emerald-400" : "text-sky-400"}">
+                  ${pred.over25Pct >= 52 ? "2.5 ÜST" : "2.5 ALT"}
+                </div>
+                <div class="text-[11px] mono text-slate-300 mt-0.5">%${pred.over25Pct >= 52 ? pred.over25Pct : (100 - pred.over25Pct)}</div>
+              </div>
+
+              <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div class="text-[10px] text-slate-400">İY / MS Lideri</div>
+                <div class="text-xs font-extrabold text-teal-300 mt-0.5 mono">${topHtFt.code}</div>
+                <div class="text-[11px] mono text-slate-300 mt-0.5">%${topHtFt.pct} Olasılık</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1X2 Full Time & Half Time Probability Bars -->
+          <div class="ios-card p-3.5 space-y-3">
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold mb-1">
+                <span class="text-slate-300">Maç Sonucu (MS 1-X-2) Dağılımı</span>
+                <span class="mono text-slate-400">Oransız Saf Olasılık</span>
+              </div>
+              <div class="w-full h-3 rounded-full overflow-hidden flex bg-slate-800">
+                <div style="width:${pred.homePct}%" class="bg-emerald-500"></div>
+                <div style="width:${pred.drawPct}%" class="bg-slate-500"></div>
+                <div style="width:${pred.awayPct}%" class="bg-sky-500"></div>
+              </div>
+              <div class="flex justify-between text-[11px] mono mt-1.5">
+                <span class="text-emerald-400 font-bold">${match.home.code}: %${pred.homePct}</span>
+                <span class="text-slate-300">Beraberlik: %${pred.drawPct}</span>
+                <span class="text-sky-400 font-bold">${match.away.code}: %${pred.awayPct}</span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800/80">
+              <div class="flex justify-between text-[11px] font-semibold mb-1">
+                <span class="text-slate-300">İlk Yarı Sonucu (İY 1-X-2) & İY Gol</span>
+                <span class="mono text-teal-400">İY 0.5 Üst: %${pred.htOver05Pct}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 text-center text-[11px] mono">
+                <div class="py-1.5 rounded-lg bg-slate-900 border border-slate-800">İY 1: <strong class="text-emerald-400">%${pred.ht1Pct}</strong></div>
+                <div class="py-1.5 rounded-lg bg-slate-900 border border-slate-800">İY X: <strong class="text-slate-200">%${pred.htXPct}</strong></div>
+                <div class="py-1.5 rounded-lg bg-slate-900 border border-slate-800">İY 2: <strong class="text-sky-400">%${pred.ht2Pct}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goal Line Thresholds (1.5, 2.5, 3.5 & BTTS) -->
+          <div class="ios-card p-3.5 space-y-2.5">
+            <div class="text-xs font-bold text-white flex items-center justify-between">
+              <span>Gol Barajları & KG Analizi</span>
+              <span class="text-[10px] mono text-slate-400">${match.home.code} ${pred.lambdaHome.toFixed(2)} - ${pred.lambdaAway.toFixed(2)} ${match.away.code} xG</span>
+            </div>
+
+            <div class="space-y-2 text-[11px]">
+              <div>
+                <div class="flex justify-between mb-0.5">
+                  <span class="text-slate-300">Karşılıklı Gol (KG Var / KG Yok)</span>
+                  <span class="mono font-bold text-emerald-400">%${pred.bttsPct} Var · %${100 - pred.bttsPct} Yok</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-400" style="width:${pred.bttsPct}%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-0.5">
+                  <span class="text-slate-300">1.5 Gol Üstü / Altı</span>
+                  <span class="mono font-bold text-teal-400">%${pred.over15Pct} Üst · %${100 - pred.over15Pct} Alt</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-teal-400" style="width:${pred.over15Pct}%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-0.5">
+                  <span class="text-slate-300">2.5 Gol Üstü / Altı</span>
+                  <span class="mono font-bold text-sky-400">%${pred.over25Pct} Üst · %${100 - pred.over25Pct} Alt</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-sky-400" style="width:${pred.over25Pct}%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-0.5">
+                  <span class="text-slate-300">3.5 Gol Üstü / Altı</span>
+                  <span class="mono font-bold text-amber-400">%${pred.over35Pct} Üst · %${100 - pred.over35Pct} Alt</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-amber-400" style="width:${pred.over35Pct}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 4 Most Probable Exact Scores (İY & MS) -->
+          <div class="ios-card p-3.5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-white">En Olası 4 Maç Skoru & İY Skoru</span>
+              <span class="text-[10px] mono text-emerald-400">İY: ${pred.topHtScore.score} (%${pred.topHtScore.prob.toFixed(1)})</span>
+            </div>
+            <div class="grid grid-cols-4 gap-2 text-center">
+              ${pred.topScores.map((s, idx) => `
+                <div class="p-2 rounded-xl border ${idx === 0 ? "bg-emerald-500/15 border-emerald-500/40" : "bg-slate-900/90 border-slate-800"}">
+                  <div class="text-xs font-extrabold mono ${idx === 0 ? "text-emerald-300" : "text-white"}">${s.score}</div>
+                  <div class="text-[10px] mono text-slate-400 mt-0.5">%${s.prob.toFixed(1)}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <!-- Natural Language Machine Reasoning Synthesis -->
+          <div class="ios-card p-3.5 space-y-2">
+            <div class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Makine Raporu Neden Bu Sonucu Üretti?</span>
+            </div>
+            <ul class="space-y-1.5 text-[11px] text-slate-300 leading-relaxed">
+              <li class="flex items-start gap-1.5">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Son 10 vs Son 2 Form Kırılımı:</strong> ${match.home.name} son 10 maçta maç başı <strong>${match.home.last10Metrics.gfAvg.toFixed(1)} gol</strong> üretirken, son 2 maçlık anlık ivme skoru <strong>${match.home.last2Metrics.momentumScore}/100</strong>. ${match.away.name} ise son 2 maçında <strong>${match.away.last2Metrics.gfAvg.toFixed(1)} gol</strong> ortalamasıyla oynuyor.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="text-amber-400 font-bold">•</span>
+                <span><strong>Sakat & Cezalı Etkisi:</strong> ${match.home.name} kadrosundaki ${match.home.missingPlayers.length} eksik oyuncu beklenen gol üretimini <strong>-%${pred.homeMissingImpactPct}</strong> törpülerken, ${match.away.name} tarafındaki eksikler <strong>-%${pred.awayMissingImpactPct}</strong> etki yaratıyor.</span>
+              </li>
+              <li class="flex items-start gap-1.5">
+                <span class="text-sky-400 font-bold">•</span>
+                <span><strong>İç/Dış Saha & İY/MS Karakteri:</strong> ${match.home.name} iç sahada maçların <strong>%${match.home.venueStats.htLeadPct}</strong>'sinde ilk yarıyı önde kapattı; bu durum İY 0.5 Üst (%${pred.htOver05Pct}) ve ${pred.over25Pct >= 52 ? "2.5 Üst" : "2.5 Alt"} olasılığını doğrudan yukarı çekiyor.</span>
+              </li>
+            </ul>
+          </div>
+        `;
+      } else if (state.activeTab === "form") {
+        const badgeColor = (r) => r === "G"
+          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+          : (r === "B" ? "bg-amber-500/20 text-amber-300 border-amber-500/40" : "bg-rose-500/20 text-rose-300 border-rose-500/40");
+
+        viewport.innerHTML = `
+          <div class="ios-card p-3.5">
+            <div class="text-xs font-bold text-white mb-2 flex items-center justify-between">
+              <span>Ev Sahibi vs Deplasman Saha İstatistiği</span>
+              <span class="text-[10px] text-emerald-400 mono">İç/Dış Saha Filtreli</span>
+            </div>
+            <div class="space-y-2 text-[11px]">
+              <div class="grid grid-cols-3 items-center text-center py-1 border-b border-slate-800/80">
+                <span class="mono font-bold text-emerald-400">${match.home.venueStats.wins}G ${match.home.venueStats.draws}B ${match.home.venueStats.losses}M</span>
+                <span class="text-slate-400">İç/Dış Karne</span>
+                <span class="mono font-bold text-sky-400">${match.away.venueStats.wins}G ${match.away.venueStats.draws}B ${match.away.venueStats.losses}M</span>
+              </div>
+              <div class="grid grid-cols-3 items-center text-center py-1 border-b border-slate-800/80">
+                <span class="mono font-bold text-white">${match.home.venueStats.xg.toFixed(2)} xG</span>
+                <span class="text-slate-400">Saha xG Ort.</span>
+                <span class="mono font-bold text-white">${match.away.venueStats.xg.toFixed(2)} xG</span>
+              </div>
+              <div class="grid grid-cols-3 items-center text-center py-1 border-b border-slate-800/80">
+                <span class="mono font-bold text-teal-300">%${match.home.venueStats.htLeadPct}</span>
+                <span class="text-slate-400">İY Önde Bitirme</span>
+                <span class="mono font-bold text-teal-300">%${match.away.venueStats.htLeadPct}</span>
+              </div>
+              <div class="grid grid-cols-3 items-center text-center py-1">
+                <span class="mono font-bold text-amber-300">%${match.home.venueStats.bttsPct} / %${match.home.venueStats.over25Pct}</span>
+                <span class="text-slate-400">KG Var / 2.5 Üst</span>
+                <span class="mono font-bold text-amber-300">%${match.away.venueStats.bttsPct} / %${match.away.venueStats.over25Pct}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ios-card p-3.5 space-y-3">
+            <div class="text-xs font-bold text-white">Son 10 Maçlık Form Dizilimi & Metrikler</div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="font-semibold text-emerald-300">${match.home.name} (Son 10)</span>
+                <span class="mono text-slate-400">${match.home.last10Metrics.ptsPerMatch.toFixed(2)} Puan/Maç · ${match.home.last10Metrics.shotsOnTarget} İsabetli Şut</span>
+              </div>
+              <div class="grid grid-cols-10 gap-1">
+                ${match.home.last10.map(r => `<span class="text-[10px] font-bold mono py-1 rounded border text-center ${badgeColor(r)}">${r}</span>`).join("")}
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="font-semibold text-sky-300">${match.away.name} (Son 10)</span>
+                <span class="mono text-slate-400">${match.away.last10Metrics.ptsPerMatch.toFixed(2)} Puan/Maç · ${match.away.last10Metrics.shotsOnTarget} İsabetli Şut</span>
+              </div>
+              <div class="grid grid-cols-10 gap-1">
+                ${match.away.last10.map(r => `<span class="text-[10px] font-bold mono py-1 rounded border text-center ${badgeColor(r)}">${r}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+
+          <div class="ios-card p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Son 2 Maçlık Mikro-Form (İY & MS Detaylı)</span>
+              <span class="text-[10px] mono text-emerald-400">Anlık İvme Analizi</span>
+            </div>
+
+            <div class="text-[11px] font-bold text-emerald-400">${match.home.name} — Son 2 Maç (İvme: ${match.home.last2Metrics.momentumScore}/100)</div>
+            ${match.home.last2.map(m => `
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px]">
+                <div class="flex justify-between font-bold text-white">
+                  <span>vs ${m.opponent}</span>
+                  <span class="mono text-emerald-300">İY: ${m.htScore} → MS: ${m.ftScore} (${m.xg} xG)</span>
+                </div>
+                <div class="text-slate-400 text-[10px] mt-1">${m.note}</div>
+              </div>
+            `).join("")}
+
+            <div class="text-[11px] font-bold text-sky-400 pt-1">${match.away.name} — Son 2 Maç (İvme: ${match.away.last2Metrics.momentumScore}/100)</div>
+            ${match.away.last2.map(m => `
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px]">
+                <div class="flex justify-between font-bold text-white">
+                  <span>vs ${m.opponent}</span>
+                  <span class="mono text-sky-300">İY: ${m.htScore} → MS: ${m.ftScore} (${m.xg} xG)</span>
+                </div>
+                <div class="text-slate-400 text-[10px] mt-1">${m.note}</div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      } else if (state.activeTab === "squad") {
+        viewport.innerHTML = `
+          <div class="ios-card p-3.5 bg-gradient-to-r from-rose-950/50 via-slate-900 to-slate-900 border-rose-500/30">
+            <div class="text-xs font-bold text-white mb-1 flex items-center justify-between">
+              <span>Kadro Eksikliği xG Kayıp Raporu</span>
+              <span class="text-[10px] mono text-rose-300">Canlı Kadro Taraması</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-2 text-center">
+              <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div class="text-[10px] text-slate-400">${match.home.name} Güç Kaybı</div>
+                <div class="text-sm font-extrabold text-rose-400 mono">-%${pred.homeMissingImpactPct}</div>
+                <div class="text-[10px] text-slate-400">${match.home.missingPlayers.length} Eksik Oyuncu</div>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div class="text-[10px] text-slate-400">${match.away.name} Güç Kaybı</div>
+                <div class="text-sm font-extrabold text-amber-400 mono">-%${pred.awayMissingImpactPct}</div>
+                <div class="text-[10px] text-slate-400">${match.away.missingPlayers.length} Eksik Oyuncu</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ios-card p-3.5 space-y-2">
+            <div class="text-xs font-bold text-emerald-400">${match.home.name} — Sakat & Kart Cezalıları</div>
+            ${match.home.missingPlayers.map(p => `
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start justify-between gap-2">
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>${p.name}</span>
+                    <span class="text-[10px] text-slate-400 font-normal">(${p.pos})</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-0.5">${p.reason} — ${p.detail}</div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                    p.status === "Cezalı" ? "bg-amber-500/20 text-amber-300 border border-amber-500/30" : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                  }">${p.status}</span>
+                  <div class="text-[10px] mono text-rose-400 mt-1">Etki: -%${p.impactPct}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="ios-card p-3.5 space-y-2">
+            <div class="text-xs font-bold text-sky-400">${match.away.name} — Sakat & Kart Cezalıları</div>
+            ${match.away.missingPlayers.map(p => `
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start justify-between gap-2">
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>${p.name}</span>
+                    <span class="text-[10px] text-slate-400 font-normal">(${p.pos})</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-0.5">${p.reason} — ${p.detail}</div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                    p.status === "Cezalı" ? "bg-amber-500/20 text-amber-300 border border-amber-500/30" : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                  }">${p.status}</span>
+                  <div class="text-[10px] mono text-amber-400 mt-1">Etki: -%${p.impactPct}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="ios-card p-3.5 text-[11px] flex items-center justify-between">
+            <div>
+              <div class="text-slate-400 text-[10px]">Maçın Hakemi & Kart Karakteri</div>
+              <div class="font-bold text-white mt-0.5">${match.referee}</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 mono text-[10px]">Kart Riski</span>
+          </div>
+        `;
+      } else if (state.activeTab === "htft") {
+        const maxHtFtPct = Math.max(...pred.htFtMatrix.map(i => i.pct));
+
+        viewport.innerHTML = `
+          <div class="ios-card p-3.5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-white">İlk Yarı / Maç Sonucu (İY/MS) 9'lu Matris</span>
+              <span class="text-[10px] mono text-emerald-400">Simülasyon: 10.000 Maç</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              ${pred.htFtMatrix.map(cell => {
+                const isBest = cell.pct === maxHtFtPct;
+                return `
+                  <div class="p-2.5 rounded-xl border text-center ${
+                    isBest
+                      ? "bg-emerald-500/20 border-emerald-500/50 text-white"
+                      : "bg-slate-900/90 border-slate-800 text-slate-300"
+                  }">
+                    <div class="text-xs font-extrabold mono ${isBest ? "text-emerald-300" : "text-white"}">${cell.code}</div>
+                    <div class="text-sm font-black mono mt-0.5">%${cell.pct}</div>
+                    <div class="text-[9px] text-slate-400 truncate mt-0.5">${cell.label}</div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <div class="ios-card p-3.5 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Geçmiş Karşılaşmalar (H2H İY & MS Skorları)</span>
+              <span class="text-[10px] mono text-slate-400">Son ${match.h2h.length} Maç</span>
+            </div>
+            <div class="space-y-1.5">
+              ${match.h2h.map(item => `
+                <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-[11px]">
+                  <div>
+                    <span class="text-slate-400 text-[10px] mono">${item.date}</span>
+                    <div class="font-bold text-white">${item.home} vs ${item.away}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="mono font-bold text-emerald-300">İY: ${item.ht}  |  MS: ${item.ft}</div>
+                    <div class="text-[10px] text-slate-400">${item.cards}</div>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function updateCharts(match) {
+      const radarCtx = document.getElementById("teamRadarChart").getContext("2d");
+      if (radarChartInstance) radarChartInstance.destroy();
+
+      radarChartInstance = new Chart(radarCtx, {
+        type: "radar",
+        data: {
+          labels: ["Hücum (xG)", "Savunma Direnci", "Son 10 Form", "Son 2 İvme", "Kadro Tamlığı"],
+          datasets: [
+            {
+              label: match.home.name,
+              data: match.home.radar,
+              backgroundColor: "rgba(16, 185, 129, 0.22)",
+              borderColor: "#10b981",
+              pointBackgroundColor: "#10b981",
+              borderWidth: 2
+            },
+            {
+              label: match.away.name,
+              data: match.away.radar,
+              backgroundColor: "rgba(56, 189, 248, 0.22)",
+              borderColor: "#38bdf8",
+              pointBackgroundColor: "#38bdf8",
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              min: 20,
+              max: 100,
+              ticks: { display: false },
+              grid: { color: "rgba(148, 163, 184, 0.15)" },
+              angleLines: { color: "rgba(148, 163, 184, 0.15)" },
+              pointLabels: { color: "#cbd5e1", font: { size: 11, weight: "600" } }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: "#e2e8f0", font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      const timingCtx = document.getElementById("goalTimingChart").getContext("2d");
+      if (timingChartInstance) timingChartInstance.destroy();
+
+      timingChartInstance = new Chart(timingCtx, {
+        type: "bar",
+        data: {
+          labels: ["1-15'", "16-30'", "31-45' (İY)", "46-60'", "61-75'", "76-90' (MS)"],
+          datasets: [
+            {
+              label: `${match.home.code} Gol %`,
+              data: match.goalTimingHome,
+              backgroundColor: "#10b981",
+              borderRadius: 5
+            },
+            {
+              label: `${match.away.code} Gol %`,
+              data: match.goalTimingAway,
+              backgroundColor: "#38bdf8",
+              borderRadius: 5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "#94a3b8", font: { size: 10 } },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { color: "#94a3b8", font: { size: 10 }, callback: (v) => `%${v}` },
+              grid: { color: "rgba(148, 163, 184, 0.1)" }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: "#e2e8f0", font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById("toastBanner");
+      document.getElementById("toastMessage").textContent = msg;
+      banner.classList.remove("hidden");
+      setTimeout(() => banner.classList.add("hidden"), 3200);
+    }
+
+    function updateAllViews() {
+      const match = MATCHES.find(m => m.id === state.selectedMatchId) || MATCHES[0];
+      state.selectedLeagueId = match.leagueId;
+      const pred = computeMatchPrediction(match, state.weights);
+      renderMatchSelectors();
+      renderIosScreen(match, pred);
+      updateCharts(match);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".ios-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.activeTab = btn.getAttribute("data-tab");
+          document.querySelectorAll(".ios-tab-btn").forEach(b => {
+            const isAct = b.getAttribute("data-tab") === state.activeTab;
+            b.className = `ios-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition ${
+              isAct ? "text-emerald-400" : "text-slate-400 hover:text-slate-200"
+            }`;
+          });
+          const match = MATCHES.find(m => m.id === state.selectedMatchId) || MATCHES[0];
+          const pred = computeMatchPrediction(match, state.weights);
+          renderIosScreen(match, pred);
+        });
+      });
+
+      const bindSlider = (id, key, labelId) => {
+        const el = document.getElementById(id);
+        el.addEventListener("input", () => {
+          state.weights[key] = parseInt(el.value, 10);
+          document.getElementById(labelId).textContent = `${state.weights[key]}%`;
+          const match = MATCHES.find(m => m.id === state.selectedMatchId) || MATCHES[0];
+          const pred = computeMatchPrediction(match, state.weights);
+          renderIosScreen(match, pred);
+        });
+      };
+
+      bindSlider("sliderWeight10", "form10", "valWeight10");
+      bindSlider("sliderWeight2", "form2", "valWeight2");
+      bindSlider("sliderWeightSquad", "squad", "valWeightSquad");
+      bindSlider("sliderWeightVenue", "venue", "valWeightVenue");
+
+      document.getElementById("btnResetWeights").addEventListener("click", () => {
+        state.weights = { form10: 25, form2: 20, squad: 25, venue: 30 };
+        document.getElementById("sliderWeight10").value = 25;
+        document.getElementById("sliderWeight2").value = 20;
+        document.getElementById("sliderWeightSquad").value = 25;
+        document.getElementById("sliderWeightVenue").value = 30;
+        document.getElementById("valWeight10").textContent = "25%";
+        document.getElementById("valWeight2").textContent = "20%";
+        document.getElementById("valWeightSquad").textContent = "25%";
+        document.getElementById("valWeightVenue").textContent = "30%";
+        updateAllViews();
+        showToast("Makine öğrenmesi parametre ağırlıkları varsayılan kalibrasyona döndürüldü.");
+      });
+
+      document.getElementById("btnRunPipeline").addEventListener("click", () => {
+        const icon = document.getElementById("syncIcon");
+        icon.classList.add("animate-spin");
+        setTimeout(() => {
+          icon.classList.remove("animate-spin");
+          updateAllViews();
+          showToast("GitHub Actions + Supabase üzerinden 6 ligin sakat/cezalı ve İY/MS tahminleri güncellendi.");
+        }, 650);
+      });
+
+      const modal = document.getElementById("archModal");
+      document.getElementById("btnToggleArchModal").addEventListener("click", () => modal.classList.remove("hidden"));
+      document.getElementById("btnCloseArchModal").addEventListener("click", () => modal.classList.add("hidden"));
+
+      document.getElementById("btnCopySwiftCode").addEventListener("click", () => {
+        const swiftCode = `struct MatchPredictionReport: Codable, Identifiable {
+    let id: String
+    let leagueCode: String // TR, EN, ES, IT, DE, FR
+    let homeTeam: String
+    let awayTeam: String
+    let confidencePct: Int
+    let homeWinPct: Int
+    let drawPct: Int
+    let awayWinPct: Int
+    let bttsYesPct: Int
+    let over25Pct: Int
+    let htOver05Pct: Int
+    let topHtFtCode: String
+}`;
+        try {
+          navigator.clipboard.writeText(swiftCode);
+        } catch (e) {
+          const ta = document.createElement("textarea");
+          ta.value = swiftCode;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        showToast("6 lig destekli SwiftUI MatchPredictionReport modeli panoya kopyalandı!");
+      });
+
+      updateAllViews();
+    });
+  </script>
+</body>
+</html>
